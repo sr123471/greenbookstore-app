@@ -1,6 +1,6 @@
 import React from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Image } from '@tarojs/components'
 import './usercenter.less'
 
 
@@ -12,46 +12,46 @@ function UserCenter() {
         <View className='container0'>
           <Image className='avatar' src='https://joeschmoe.io/api/v1/random' />
           <View className='username'>王小明
-          <View className='line'/>
-          <View className='school'>XXX大学</View>
+            <View className='line' />
+            <View className='school'>XXX大学</View>
           </View>
         </View>
         <View className='container1'>
           <View>
-            <Image className='icon1' src='../../resource/allorder.png' />
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/allorder.png' />
             <View>全部订单</ View>
           </View>
           <View>
-            <Image className='icon1' src='../../resource/payment.png' />
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/payment.png' />
             <View>待付款</View>
           </View>
 
           <View>
-            <Image className='icon1' src='../../resource/package.png' />
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/package.png' />
             <View>待发货</View>
           </View>
 
           <View>
-            <Image className='icon1' src='../../resource/delivery.png' />
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/delivery.png' />
             <View>待收货</View>
           </View>
 
           <View>
-            <Image className='icon1' src='../../resource/star.png' />
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/star.png' />
             <View>我的收藏</View>
           </View>
-          <View onClick={test}>
-            <Image className='icon1' src='../../resource/userinfo.png' />
+          <View onClick={toUserInfo}>
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/userinfo.png' />
             <View>个人信息</View>
           </View>
 
-          <View>
-            <Image className='icon1' src='../../resource/recycle.png' />
+          <View onClick={toSellBooks}>
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/recycle.png' />
             <View>图书回收</View>
           </View>
 
-          <View>
-            <Image className='icon1' src='../../resource/advice.png' />
+          <View onClick={toAdvice}>
+            <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/advice.png' />
             <View>意见反馈</View>
           </View>
         </View>
@@ -60,8 +60,22 @@ function UserCenter() {
   )
 }
 
-const test = () => {
-  console.log("test")
+const toUserInfo = () => {
+  Taro.navigateTo({ url: '../userinfo/userinfo' }).then(() => {
+    console.log("OK！")
+  })
+}
+
+const toSellBooks = () => {
+  Taro.navigateTo({ url: '../sellbooks/sellbooks' }).then(() => {
+    console.log("OK！")
+  })
+}
+
+const toAdvice = () => {
+  Taro.navigateTo({ url: '../advice/advice' }).then(() => {
+    console.log("OK！")
+  })
 }
 
 export default UserCenter

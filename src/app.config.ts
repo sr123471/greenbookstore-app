@@ -1,7 +1,9 @@
 export default {
   pages: [
     'pages/usercenter/usercenter',
+    'pages/userinfo/userinfo',
     'pages/index/index',
+    'pages/advice/advice'
   ],
   tabBar: {
     list: [{

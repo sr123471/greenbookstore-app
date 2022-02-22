@@ -3,6 +3,7 @@ import Taro from '@tarojs/taro'
 import { AtTextarea, AtButton, AtMessage } from "taro-ui"
 import { View } from '@tarojs/components'
 
+import "taro-ui/dist/style/components/button.scss";
 import "taro-ui/dist/style/components/textarea.scss";
 import "taro-ui/dist/style/components/message.scss";
 

@@ -3,7 +3,8 @@ export default {
     'pages/usercenter/usercenter',
     'pages/userinfo/userinfo',
     'pages/index/index',
-    'pages/advice/advice'
+    'pages/advice/advice',
+    'pages/sellbooks/sellbooks'
   ],
   tabBar: {
     list: [{

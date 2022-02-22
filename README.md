@@ -7,6 +7,7 @@
 - React
 - Less
 - Typescript
+- 微信小程序云开发
 
 
 # 安装依赖

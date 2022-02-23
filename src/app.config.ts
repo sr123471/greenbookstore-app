@@ -1,5 +1,6 @@
 export default {
   pages: [
+    'pages/addressedit/addressedit',
     'pages/address/address',
     'pages/usercenter/usercenter',
     'pages/orderdetail/orderdetail',

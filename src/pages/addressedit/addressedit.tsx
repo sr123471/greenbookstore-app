@@ -1,42 +1,128 @@
 import { Component } from 'react'
 import Taro from '@tarojs/taro'
-import { AtAvatar, AtIcon, AtButton } from "taro-ui"
-import { View, Image, Text } from '@tarojs/components'
+import { AtForm, AtInput, AtDivider, AtButton, AtTextarea } from "taro-ui"
+import { View } from '@tarojs/components'
+import Citypicker from '../../components/cityPicker/cityPicker'
 
-import "taro-ui/dist/style/components/avatar.scss";
+import "taro-ui/dist/style/components/input.scss";
+import "taro-ui/dist/style/components/divider.scss";
 import "taro-ui/dist/style/components/button.scss";
-import './address.less'
+import "taro-ui/dist/style/components/textarea.scss";
+import './addressedit.less'
 
 export default class Address extends Component<any, any> {
 
-  detail(record) {
-    Taro.navigateTo({ url: '../orderdetail/orderdetail' })
+  onGetRegion(region) {
+    // 参数region为选择的省市区
+    console.log(region);
   }
 
-  pay() {
-    console.log('payment')
+  cityEnd(city) {
+    console.log(city)
+  }
+
+  state = {
+    name: '',
+    phone: '',
+    detailaddr: '',
+    province: '',
+    provinceSelector: [],
+    city: '',
+    citySelector: []
+  }
+
+  nameChange(value) {
+    this.setState({
+      name: value
+    })
+    return value
+  }
+
+  phoneChange(value) {
+    this.setState({
+      phone: value
+    })
+    return value
+  }
+
+  detailaddrChange(value) {
+    this.setState({
+      detailaddr: value
+    })
+    return value
+  }
+
+  onSubmit(event) {
+    console.log(this.state)
+  }
+
+  provinceChange(e) {
+    var selected = this.state.provinceSelector[e.detail.value]
+    this.setState({
+      province: selected,
+
+    })
+  }
+
+  cityChange(e) {
+    console.log(e.detail.value)
+    this.setState({ city: this.state.citySelector[e.detail.value] })
+  }
+
+  onReset(event) {
+    this.setState({
+      name: '',
+      phone: '',
+      detailaddr: '',
+      province: '',
+    })
   }
 
   render() {
     return (
       <View className='bg'>
         <View className='card'>
-          <AtAvatar size='small' className='avatar' circle text='王小明'></AtAvatar>
-          <View>
-            <AtIcon onClick={this.detail.bind(this)} className='edit' value='edit' size='20' color='#8c8c8c' />
-            <View className='name'>
-              王小明
-              <Text className='phone'> 151xxxxxxxx</Text>
-            </View>
-            <View className='address'>
-              浙江省杭州市西湖区XX大学XX校区asdasdasdasdasdasdasdasdaddasdasaasdas
-            </View>
-            <View className='btncontainer'>
-              {/* 阻止事件冒泡 */}
-            </View>
-          </View>
+          <AtForm
+            onSubmit={this.onSubmit.bind(this)}
+            onReset={this.onReset.bind(this)}
+          >
+
+            <AtDivider content='收件人信息' />
+
+            <AtInput
+              name='value'
+              title='姓名'
+              type='text'
+              placeholder='收件人姓名'
+              value={this.state.name}
+              onChange={this.nameChange.bind(this)}
+            />
+
+            <AtInput
+              name='value'
+              title='电话'
+              type='text'
+              placeholder='收件人电话'
+              value={this.state.phone}
+              onChange={this.phoneChange.bind(this)}
+            />
+
+            <AtDivider className='line' content='收件人地址' />
+
+            <Citypicker Division="-" getCity={this.cityEnd.bind(this)}></Citypicker>
+
+            <AtTextarea
+              className='detail'
+              value={this.state.detailaddr}
+              onChange={this.detailaddrChange.bind(this)}
+              maxLength={80}
+              placeholder='详细地址'
+            />
+
+            <AtButton className='btn' type='primary' formType='submit'>确定</AtButton>
+            <AtButton className='btn' formType='reset'>重置</AtButton>
+          </AtForm>
         </View>
-        <AtButton className='btn' circle={true} type='primary' size='normal'>添加地址</AtButton>
       </View>
     )
   }

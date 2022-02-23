@@ -36,7 +36,7 @@ function UserCenter() {
             <View>待收货</View>
           </View>
 
-          <View>
+          <View onClick={toMyStar}>
             <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/star.png' />
             <View>我的收藏</View>
           </View>
@@ -101,4 +101,11 @@ const toUnReceived=()=>{
     console.log("OK！")
   })
 }
+
+const toMyStar=()=>{
+  Taro.navigateTo({ url: '../mystar/mystar' }).then(() => {
+    console.log("OK！")
+  })
+}
+
 export default UserCenter

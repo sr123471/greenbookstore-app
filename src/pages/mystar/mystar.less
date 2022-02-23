@@ -1,0 +1,82 @@
+.bg {
+  min-height: 1300px;
+  background-image: linear-gradient(to bottom right, #52c41a, rgb(62, 227, 189), #bae637);
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.card {
+  display: grid;
+  background-color: white;
+  grid-template-columns: 200px auto;
+  grid-template-rows: 250px;
+  border-radius: 20px;
+  margin: 10px 10px;
+}
+
+.bookpic{
+  grid-row: 1/2;
+  grid-column: 1/2;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 30px;
+  align-self: center;
+  justify-self: center;
+}
+
+.bookinfo{
+  grid-row: 1/2;
+  grid-column: 2/3;
+}
+
+.booktitle{
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 9%;
+  width: 90%;
+  height: 90px;
+  font-weight: bold;
+}
+
+.arrow{
+  margin-top: 10px;
+  margin-right: 10px;
+  float: right;
+}
+
+.price{
+  margin-right: 60px;
+  margin-top: 30px;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.priceint{
+  font-size: large;
+  font-weight: bold;
+}
+
+.pricedecimal{
+  font-size: small;
+}
+
+.btn{
+  width: 5.5em;
+}
+
+.finish{
+  color: gray;
+}
+
+.btncontainer{
+  float: right;
+  margin-right: 20px;
+  display: grid;
+  gap: 20px;
+  grid-template-rows: 50px;
+  grid-template-columns: auto auto;
+  justify-items: right;
+}

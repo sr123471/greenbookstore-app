@@ -32,6 +32,12 @@ export default class Index extends Component<any, any> {
           <AtListItem title='学校' extraText='xxx大学' />
           <AtListItem title='专业' extraText='软件工程' />
           <AtListItem title='电话' extraText='1xxxxxxxxxx' />
+          <AtListItem
+            title='收货地址'
+            note='管理您的收货地址'
+            arrow='right'
+            thumb='http://img10.360buyimg.com/jdphoto/s72x72_jfs/t5872/209/5240187906/2872/8fa98cd/595c3b2aN4155b931.png'
+          />
         </AtList>
       </View>
       //修改个人信息页面暂时未做

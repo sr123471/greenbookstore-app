@@ -17,21 +17,21 @@ function UserCenter() {
           </View>
         </View>
         <View className='container1'>
-          <View>
+          <View onClick={toAllOrder}>
             <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/allorder.png' />
             <View>全部订单</ View>
           </View>
-          <View>
+          <View onClick={toUnPaid}>
             <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/payment.png' />
             <View>待付款</View>
           </View>
 
-          <View>
+          <View onClick={toUnSent}>
             <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/package.png' />
             <View>待发货</View>
           </View>
 
-          <View>
+          <View onClick={toUnReceived}>
             <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/delivery.png' />
             <View>待收货</View>
           </View>
@@ -74,6 +74,30 @@ const toSellBooks = () => {
 
 const toAdvice = () => {
   Taro.navigateTo({ url: '../advice/advice' }).then(() => {
+    console.log("OK！")
+  })
+}
+
+const toAllOrder=()=>{
+  Taro.navigateTo({ url: '../allorder/allorder' }).then(() => {
+    console.log("OK！")
+  })
+}
+
+const toUnPaid=()=>{
+  Taro.navigateTo({ url: '../unpaid/unpaid' }).then(() => {
+    console.log("OK！")
+  })
+}
+
+const toUnSent=()=>{
+  Taro.navigateTo({ url: '../unsent/unsent' }).then(() => {
+    console.log("OK！")
+  })
+}
+
+const toUnReceived=()=>{
+  Taro.navigateTo({ url: '../unreceived/unreceived' }).then(() => {
     console.log("OK！")
   })
 }

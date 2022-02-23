@@ -1,6 +1,10 @@
 export default {
   pages: [
     'pages/usercenter/usercenter',
+    'pages/unsent/unsent',
+    'pages/unpaid/unpaid',
+    'pages/unreceived/unreceived',
+    'pages/allorder/allorder',
     'pages/userinfo/userinfo',
     'pages/index/index',
     'pages/advice/advice',

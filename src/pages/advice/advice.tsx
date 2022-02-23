@@ -26,21 +26,21 @@ export default class Index extends Component<any, any> {
     console.log(this.state.brief)
     console.log(this.state.detail)
 
-    if (this.state.brief === ''||this.state.detail==='') {
+    if (this.state.brief === '' || this.state.detail === '') {
       Taro.atMessage({
         'message': '您不能提交空消息哦',
         'type': 'error',
       })
     }
 
-    else if(this.state.brief.length<15 || this.state.detail.length<30){
+    else if (this.state.brief.length < 15 || this.state.detail.length < 30) {
       Taro.atMessage({
         'message': '概括和详细展开分别需要至少15字和30字哦',
         'type': 'error',
       })
     }
 
-    else{
+    else {
       Taro.atMessage({
         'message': '感谢您的反馈！我们会努力改进！',
         'type': 'success',
@@ -62,9 +62,15 @@ export default class Index extends Component<any, any> {
     return (
       <View>
         <AtMessage />
+
+        <View className='container0'>
+          <View className='title'>意见反馈</View>
+          <View className='line' />
+        </View>
+
         <View className='text'>
           <AtTextarea
-          className='brief'
+            className='brief'
             value={this.state.brief}
             onChange={this.handleChangebrief.bind(this)}
             maxLength={30}

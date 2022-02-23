@@ -10,7 +10,7 @@ import './allorder.less'
 export default class AllOrder extends Component<any, any> {
 
   detail(record){
-    console.log(record)
+    Taro.navigateTo({url:'../orderdetail/orderdetail'})
   }
 
   pay(){

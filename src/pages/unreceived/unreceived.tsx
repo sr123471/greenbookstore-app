@@ -10,7 +10,7 @@ import './unreceived.less'
 export default class UnReceived extends Component<any, any> {
 
   detail(record){
-    console.log(record)
+    Taro.navigateTo({url:'../orderdetail/orderdetail'})
   }
 
   pay(){

@@ -10,7 +10,7 @@ import './unpaid.less'
 export default class UnPaid extends Component<any, any> {
 
   detail(record){
-    console.log(record)
+    Taro.navigateTo({url:'../orderdetail/orderdetail'})
   }
 
   pay(){

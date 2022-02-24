@@ -26,7 +26,7 @@ class PagePicker extends Component {
     
     state = {
       selector: [shen,shi,qu],
-      selectorChecked: '安徽 - '+"合肥 - "+"瑶海",
+      selectorChecked: '',
     }
     
     onChange = e => {

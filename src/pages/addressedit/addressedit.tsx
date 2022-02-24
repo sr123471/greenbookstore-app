@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import Taro from '@tarojs/taro'
-import { AtForm, AtInput, AtDivider, AtButton, AtTextarea } from "taro-ui"
+import { AtInput, AtDivider, AtButton, AtTextarea } from "taro-ui"
 import { View } from '@tarojs/components'
 import Citypicker from '../../components/cityPicker/cityPicker'
 
@@ -17,18 +17,11 @@ export default class Address extends Component<any, any> {
     console.log(region);
   }
 
-  cityEnd(city) {
-    console.log(city)
-  }
-
   state = {
     name: '',
     phone: '',
     detailaddr: '',
-    province: '',
-    provinceSelector: [],
     city: '',
-    citySelector: []
   }
 
   nameChange(value) {
@@ -52,29 +45,19 @@ export default class Address extends Component<any, any> {
     return value
   }
 
-  onSubmit(event) {
+  onSubmit() {
     console.log(this.state)
   }
 
-  provinceChange(e) {
-    var selected = this.state.provinceSelector[e.detail.value]
-    this.setState({
-      province: selected,
-
-    })
+  cityChange(value) {
+    this.setState({ city: value })
   }
 
-  cityChange(e) {
-    console.log(e.detail.value)
-    this.setState({ city: this.state.citySelector[e.detail.value] })
-  }
-
-  onReset(event) {
+  onReset() {
     this.setState({
       name: '',
       phone: '',
-      detailaddr: '',
-      province: '',
+      detailaddr: ''
     })
   }
 
@@ -82,46 +65,41 @@ export default class Address extends Component<any, any> {
     return (
       <View className='bg'>
         <View className='card'>
-          <AtForm
-            onSubmit={this.onSubmit.bind(this)}
-            onReset={this.onReset.bind(this)}
-          >
 
-            <AtDivider content='收件人信息' />
+          <AtDivider content='收件人信息' />
 
-            <AtInput
-              name='value'
-              title='姓名'
-              type='text'
-              placeholder='收件人姓名'
-              value={this.state.name}
-              onChange={this.nameChange.bind(this)}
-            />
+          <AtInput
+            name='name'
+            title='姓名'
+            type='text'
+            placeholder='收件人姓名'
+            value={this.state.name}
+            onChange={this.nameChange.bind(this)}
+          />
 
-            <AtInput
-              name='value'
-              title='电话'
-              type='text'
-              placeholder='收件人电话'
-              value={this.state.phone}
-              onChange={this.phoneChange.bind(this)}
-            />
+          <AtInput
+            name='phone'
+            title='电话'
+            type='text'
+            placeholder='收件人电话'
+            value={this.state.phone}
+            onChange={this.phoneChange.bind(this)}
+          />
 
-            <AtDivider className='line' content='收件人地址' />
+          <AtDivider className='line' content='收件人地址' />
 
-            <Citypicker Division="-" getCity={this.cityEnd.bind(this)}></Citypicker>
+          <Citypicker Division="-" getCity={this.cityChange.bind(this)}></Citypicker>
 
-            <AtTextarea
-              className='detail'
-              value={this.state.detailaddr}
-              onChange={this.detailaddrChange.bind(this)}
-              maxLength={80}
-              placeholder='详细地址'
-            />
+          <AtTextarea
+            className='detail'
+            value={this.state.detailaddr}
+            onChange={this.detailaddrChange.bind(this)}
+            maxLength={80}
+            placeholder='详细地址'
+          />
 
-            <AtButton className='btn' type='primary' formType='submit'>确定</AtButton>
-            <AtButton className='btn' formType='reset'>重置</AtButton>
-          </AtForm>
+          <AtButton className='btn' type='primary' onClick={this.onSubmit.bind(this)}>确定</AtButton>
+          <AtButton className='btn' onClick={this.onReset.bind(this)}>重置</AtButton>
         </View>
       </View>
     )

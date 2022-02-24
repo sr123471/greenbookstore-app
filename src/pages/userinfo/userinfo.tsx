@@ -1,5 +1,6 @@
 import { Component, ReactNode } from 'react'
-import { View, Text } from '@tarojs/components'
+import { View } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { AtList, AtListItem } from "taro-ui"
 
 import "taro-ui/dist/style/components/list.scss";
@@ -18,6 +19,10 @@ export default class Index extends Component<any, any> {
     phone: '',
   }
 
+  toAddrManager(){
+    Taro.navigateTo({url:'../address/address'})
+  }
+
   render(): ReactNode {
     return (
       <View>
@@ -33,6 +38,7 @@ export default class Index extends Component<any, any> {
           <AtListItem title='专业' extraText='软件工程' />
           <AtListItem title='电话' extraText='1xxxxxxxxxx' />
           <AtListItem
+            onClick={this.toAddrManager.bind(this)}
             title='收货地址'
             note='管理您的收货地址'
             arrow='right'

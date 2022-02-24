@@ -1,8 +1,8 @@
 export default {
   pages: [
+    'pages/usercenter/usercenter',
     'pages/addressedit/addressedit',
     'pages/address/address',
-    'pages/usercenter/usercenter',
     'pages/orderdetail/orderdetail',
     'pages/mystar/mystar',
     'pages/unsent/unsent',

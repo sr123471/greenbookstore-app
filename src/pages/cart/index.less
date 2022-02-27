@@ -31,6 +31,7 @@ page {
 
     .item {
       display: flex;
+      position: relative;
       margin-top: 20px;
       padding: 20px;
       background-color: #ffffff;
@@ -53,38 +54,42 @@ page {
         border: 1px solid #C6100D;
       }
 
-      .bookImage {
-        width: 160px;
-        display: block;
-        margin-left: 10px;
-      }
+      .bookArea {
+        display: flex;
 
-      .bookMessage {
-        position: relative;
-        margin-left: 30px;
-        flex-grow: 1;
+        .bookImageBg {
+          width: 160px;
+          height: 160px;
+          text-align: center;
+          font-size: 0;
 
-        .bookName {
-          // 很奇怪的问题，因为文字太长自动换行导致压缩了icon的宽度，设置宽度不让换行就解决了
-          width: 400px;
+          .bookImage {
+            height: 160px;
+          }
         }
 
-        .priceArea {
-          display: flex;
-          justify-content: space-between;
+        .bookMessage {
+          position: relative;
+          margin-left: 10px;
+          flex-grow: 1;
+
+          .bookName {
+            // 很奇怪的问题，因为文字太长自动换行导致压缩了icon的宽度，设置宽度不让换行就解决了
+            width: 400px;
+          }
 
           .price {
             position: absolute;
             bottom: 10px;
             color: #C6100D;
           }
-
-          .quantity {
-            position: absolute;
-            bottom: 0px;
-            right: 0;
-          }
         }
+      }
+
+      .quantity {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
       }
     }
   }
@@ -129,6 +134,8 @@ page {
 
       .settlementBt {
         margin: 0;
+        background-color: #C6100D;
+        border: #C6100D;
       }
     }
   }

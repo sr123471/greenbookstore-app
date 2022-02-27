@@ -53,6 +53,10 @@ export default class Index extends Component {
 
   componentDidHide() { }
 
+  handleLinkToAddressPage = () => {
+    Taro.navigateTo({ url: '/pages/address/address' })
+  }
+
   // 计数器
   handleChange = (value) => {
     this.setState({
@@ -74,7 +78,7 @@ export default class Index extends Component {
 
     return (
       <View className='purchasePage'>
-        <View className='content'>
+        <View className='content' onClick={this.handleLinkToAddressPage}>
           <View className='addressArea'>
             <AtIcon prefixClass='icon' value='zuobiao' size='25'></AtIcon>
             {
@@ -93,8 +97,10 @@ export default class Index extends Component {
             <AtIcon prefixClass='icon' className='icon-home' value='shouye' size='18'></AtIcon>
             <Text>绿色书屋</Text>
             <View className='bookDetailMessage'>
-              <Image className='bookImage' src={mockBook.imgURL} mode='widthFix'></Image>
-              <View>
+              <View className='bookImageBg'>
+                <Image className='bookImage' src={mockBook.imgURL} mode='heightFix'></Image>
+              </View>
+              <View className='bookMessage'>
                 <View className='bookNameAndPrice'>
                   <View className='bookName'>{mockBook.name}</View>
                   <View className='bookPrice'>¥{mockBook.presentPrice}</View>

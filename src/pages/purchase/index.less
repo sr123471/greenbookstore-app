@@ -65,29 +65,35 @@ page {
         padding: 30px 0;
         border-bottom: 1px solid #f2f2f2;
 
-        .bookImage {
-          width: 130px;
+        .bookImageBg {
+          width: 180px;
+          height: 180px;
+          font-size: 0;
+          text-align: center;
+
+          .bookImage {
+            height: 180px;
+          }
         }
 
-        .bookNameAndPrice {
-          display: flex;
-          justify-content: space-between;
+        .bookMessage {
+          flex-grow: 1;
 
-          .bookName {
-            margin-left: 20px;
+          .bookNameAndPrice {
+            display: flex;
+            justify-content: space-between;
+
+            .bookName {
+              margin-left: 20px;
+            }
           }
 
-          .bookPrice {
+          .quantity {
             position: absolute;
             right: 0;
+            margin-top: 40px;
+            color: black;
           }
-        }
-
-        .quantity {
-          position: absolute;
-          right: 0;
-          margin-top: 40px;
-          color: black;
         }
       }
 
@@ -150,6 +156,8 @@ page {
       margin: 0;
       line-height: 60px;
       font-weight: bold;
+      background-color: #C6100D;
+      border: #C6100D;
     }
   }
 }

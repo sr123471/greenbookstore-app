@@ -114,21 +114,23 @@ export default class Index extends Component {
         <View className='content'>
           {
             mockProfessionalBooks.map(item =>
-              <View className='bookItem' key={item.id} onClick={this.handleLinkBookPage}>
-                <View className='imageWrapper'>
-                  <Image className='bookImage' src={item.imgURL} mode='widthFix'></Image>
-                </View>
-                <View className='bookMessage'>
-                  <View className='bookName'>{item.name}</View>
-                  <View>作者：{item.author}</View>
-                  <View>出版社：{item.publisher}</View>
-                  <View className='priceMessage'>
-                    <View className='presentPrice'>¥ {item.presentPrice}</View>
-                    <View className='originalPrice'>{item.originalPrice}</View>
-                    <View className='shoppingIconBg'>
-                      <AtIcon className='shoppingIcon' value='shopping-cart' size='30'></AtIcon>
+              <View className='bookItem' key={item.id}>
+                <View className='bookArea' onClick={this.handleLinkBookPage}>
+                  <View className='imageWrapper'>
+                    <Image className='bookImage' src={item.imgURL} mode='heightFix'></Image>
+                  </View>
+                  <View className='bookMessage'>
+                    <View className='bookName'>{item.name}</View>
+                    <View>作者：{item.author}</View>
+                    <View>出版社：{item.publisher}</View>
+                    <View className='priceMessage'>
+                      <View className='presentPrice'>¥ {item.presentPrice}</View>
+                      <View className='originalPrice'>{item.originalPrice}</View>
                     </View>
                   </View>
+                </View>
+                <View className='shoppingIconBg'>
+                  <AtIcon className='shoppingIcon' value='shopping-cart' size='20'></AtIcon>
                 </View>
               </View>
             )

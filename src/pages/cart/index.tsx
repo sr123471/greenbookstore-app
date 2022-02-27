@@ -51,6 +51,10 @@ export default class Index extends Component {
     Taro.switchTab({ url: '/pages/home/index' })
   }
 
+  handleLinkToBookDetailPage = () => {
+    Taro.navigateTo({ url: '/pages/bookDetail/index' })
+  }
+
   // 管理购物车
   handleManage = () => {
     const { isManagement } = this.state
@@ -154,25 +158,25 @@ export default class Index extends Component {
                     <View className={item.isSelect === true ? 'iconBg iconBg-active' : 'iconBg'} onClick={this.handleSelectItem.bind(this, item.id, 'selectOne')}>
                       <AtIcon className='icon-check' value='check' size='15'></AtIcon>
                     </View>
-                    <View>
-                      <Image className='bookImage' src={item.imgURL} mode='widthFix'></Image>
-                    </View>
-                    <View className='bookMessage'>
-                      <View className='bookName'>{item.bookName}</View>
-                      <View className='priceArea'>
+                    <View className='bookArea' onClick={this.handleLinkToBookDetailPage}>
+                      <View className='bookImageBg'>
+                        <Image className='bookImage' src={item.imgURL} mode='heightFix'></Image>
+                      </View>
+                      <View className='bookMessage'>
+                        <View className='bookName'>{item.bookName}</View>
                         <View className='price'>¥{item.presentPrice}</View>
-                        <AtInputNumber
-                          className='quantity'
-                          type='digit'
-                          min={1}
-                          max={item.inventory}
-                          step={1}
-                          width={60}
-                          value={value}
-                          onChange={this.handleChange.bind(this, item.id)}
-                        />
                       </View>
                     </View>
+                    <AtInputNumber
+                      className='quantity'
+                      type='digit'
+                      min={1}
+                      max={item.inventory}
+                      step={1}
+                      width={60}
+                      value={value}
+                      onChange={this.handleChange.bind(this, item.id)}
+                    />
                   </View>
                 )}
               </View>

@@ -23,7 +23,8 @@ $color-brand: #C6100D;
 @import "~taro-ui/dist/style/components/flex.scss";
 @import "~taro-ui/dist/style/components/divider.scss";
 
+// 使用heightFix防止图片出现闪屏
 Image {
-  width: 100%;
-  height: auto;
+  width: auto;
+  height: 100%;
 }

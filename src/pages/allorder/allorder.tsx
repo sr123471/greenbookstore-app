@@ -2,18 +2,15 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtButton, AtIcon } from "taro-ui"
 import { View, Image, Text } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/button.scss";
-import "taro-ui/dist/style/components/icon.scss";
 import './allorder.less'
 
 export default class AllOrder extends Component<any, any> {
 
-  detail(record){
-    Taro.navigateTo({url:'../orderdetail/orderdetail'})
+  detail(record) {
+    Taro.navigateTo({ url: '../orderdetail/orderdetail' })
   }
 
-  pay(){
+  pay() {
     console.log('payment')
   }
 
@@ -36,7 +33,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>付款</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>付款</AtButton>
             </View>
           </View>
         </View>
@@ -57,7 +54,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>查看物流</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>查看物流</AtButton>
             </View>
           </View>
         </View>
@@ -78,7 +75,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>确认收货</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>确认收货</AtButton>
             </View>
           </View>
         </View>
@@ -119,7 +116,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>查看物流</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>查看物流</AtButton>
             </View>
           </View>
         </View>

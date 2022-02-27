@@ -2,18 +2,15 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtButton, AtIcon } from "taro-ui"
 import { View, Image, Text } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/button.scss";
-import "taro-ui/dist/style/components/icon.scss";
 import './unsent.less'
 
 export default class UnPaid extends Component<any, any> {
 
-  detail(record){
-    Taro.navigateTo({url:'../orderdetail/orderdetail'})
+  detail(record) {
+    Taro.navigateTo({ url: '../orderdetail/orderdetail' })
   }
 
-  pay(){
+  pay() {
     console.log('payment')
   }
 
@@ -36,7 +33,7 @@ export default class UnPaid extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>待定</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>待定</AtButton>
             </View>
           </View>
         </View>

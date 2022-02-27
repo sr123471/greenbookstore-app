@@ -2,8 +2,6 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtListItem, AtList } from "taro-ui"
 import { View, Image, Text } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/list.scss";
 import './orderdetail.less'
 
 export default class UnReceived extends Component<any, any> {

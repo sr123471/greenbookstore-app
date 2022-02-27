@@ -2,11 +2,6 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtSteps, AtDivider } from "taro-ui"
 import { View, Image } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/steps.scss";
-import "taro-ui/dist/style/components/icon.scss";
-import "taro-ui/dist/style/components/divider.scss";
-
 import './sellbooks.less'
 
 

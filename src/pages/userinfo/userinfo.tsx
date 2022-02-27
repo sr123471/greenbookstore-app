@@ -2,9 +2,6 @@ import { Component, ReactNode } from 'react'
 import { View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { AtList, AtListItem } from "taro-ui"
-
-import "taro-ui/dist/style/components/list.scss";
-
 import './userinfo.less'
 
 

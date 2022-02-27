@@ -22,6 +22,8 @@ $color-brand: #C6100D;
 @import "~taro-ui/dist/style/components/search-bar.scss";
 @import "~taro-ui/dist/style/components/flex.scss";
 @import "~taro-ui/dist/style/components/divider.scss";
+@import "~taro-ui/dist/style/components/steps.scss";
+@import "~taro-ui/dist/style/components/message.scss";
 
 // 使用heightFix防止图片出现闪屏
 Image {

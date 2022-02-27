@@ -78,8 +78,8 @@ export default class Index extends Component {
 
     return (
       <View className='purchasePage'>
-        <View className='content' onClick={this.handleLinkToAddressPage}>
-          <View className='addressArea'>
+        <View className='content'>
+          <View className='addressArea' onClick={this.handleLinkToAddressPage}>
             <AtIcon prefixClass='icon' value='zuobiao' size='25'></AtIcon>
             {
               receiveInformationList.length === 0 ?

@@ -2,18 +2,15 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtButton, AtIcon } from "taro-ui"
 import { View, Image, Text } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/button.scss";
-import "taro-ui/dist/style/components/icon.scss";
 import './mystar.less'
 
 export default class MyStar extends Component<any, any> {
 
-  detail(record){
+  detail(record) {
     console.log(record)
   }
 
-  pay(){
+  pay() {
     console.log('payment')
   }
 

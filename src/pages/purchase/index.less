@@ -1,0 +1,155 @@
+page {
+  background-color: #f2f2f2;
+}
+
+.purchasePage {
+
+  .content {
+    padding: 30px 40px;
+
+    .addressArea {
+      display: flex;
+      position: relative;
+      align-items: center;
+      padding: 20px 60px 20px 60px;
+      background-color: #ffffff;
+      border-radius: 20px;
+
+      .addAddressText {
+        margin-left: 30px;
+        font-size: 36px;
+      }
+
+      .addressText {
+        margin-left: 30px;
+
+        .location {
+          color: #464444;
+        }
+
+        .specificAddress {
+          margin: 10px 0;
+          font-size: large;
+        }
+
+        .consignee {
+          color: #464444;
+        }
+
+        .phoneNumber {
+          margin-left: 20px;
+          color: #464444;
+        }
+      }
+
+      .icon-right {
+        position: absolute;
+        right: 60px;
+      }
+    }
+
+    .orderMessage {
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 20px;
+      background-color: #ffffff;
+
+      .icon-home {
+        vertical-align: text-bottom;
+        margin-right: 10px;
+      }
+
+      .bookDetailMessage {
+        display: flex;
+        position: relative;
+        padding: 30px 0;
+        border-bottom: 1px solid #f2f2f2;
+
+        .bookImage {
+          width: 130px;
+        }
+
+        .bookNameAndPrice {
+          display: flex;
+          justify-content: space-between;
+
+          .bookName {
+            margin-left: 20px;
+          }
+
+          .bookPrice {
+            position: absolute;
+            right: 0;
+          }
+        }
+
+        .quantity {
+          position: absolute;
+          right: 0;
+          margin-top: 40px;
+          color: black;
+        }
+      }
+
+      .distribution {
+        display: flex;
+        justify-content: space-between;
+        padding: 30px 0;
+        border-bottom: 1px solid #f2f2f2;
+      }
+
+      .subtotal {
+        display: flex;
+        justify-content: flex-end;
+        padding: 30px 0;
+
+        .subtotalPrice {
+          color: #C6100D;
+        }
+      }
+    }
+
+    .purchaseWay {
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 20px;
+      background-color: #ffffff;
+
+      .wechatPurchase {
+        display: flex;
+        align-items: center;
+        position: relative;
+        margin-top: 20px;
+
+        .icon-gou {
+          position: absolute;
+          right: 0;
+        }
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 20px 40px;
+    background-color: #ffffff;
+
+    .totalPrice {
+      color: #C6100D;
+      margin-right: 20px;
+    }
+
+    .submitBt {
+      height: 60px;
+      margin: 0;
+      line-height: 60px;
+      font-weight: bold;
+    }
+  }
+}

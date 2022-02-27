@@ -1,0 +1,135 @@
+page {
+  background-color: #f2f2f2;
+}
+
+.cartPage {
+
+  .emptyCart {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 200px;
+
+    .emptyCartBt {
+      margin-top: 40px;
+    }
+  }
+
+  .manageArea {
+    background-color: #ffffff;
+    font-size: 34px;
+
+    .manageText {
+      display: block;
+      width: 100px;
+      padding: 0 20px 20px 20px;
+    }
+  }
+
+  .itemList {
+
+    .item {
+      display: flex;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #ffffff;
+
+      .iconBg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        // 对应的是.item中的display: flex，指单个项目的对齐方式
+        align-self: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid black;
+        border-radius: 50%;
+        color: #ffffff;
+      }
+
+      .iconBg-active {
+        background-color: #C6100D;
+        border: 1px solid #C6100D;
+      }
+
+      .bookImage {
+        width: 160px;
+        display: block;
+        margin-left: 10px;
+      }
+
+      .bookMessage {
+        position: relative;
+        margin-left: 30px;
+        flex-grow: 1;
+
+        .bookName {
+          // 很奇怪的问题，因为文字太长自动换行导致压缩了icon的宽度，设置宽度不让换行就解决了
+          width: 400px;
+        }
+
+        .priceArea {
+          display: flex;
+          justify-content: space-between;
+
+          .price {
+            position: absolute;
+            bottom: 10px;
+            color: #C6100D;
+          }
+
+          .quantity {
+            position: absolute;
+            bottom: 0px;
+            right: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .settlement {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-left: 20px;
+    background-color: #ffffff;
+
+    .iconBg {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+      width: 40px;
+      height: 40px;
+      margin-right: 20px;
+      border: 1px solid black;
+      border-radius: 50%;
+      color: #ffffff;
+    }
+
+    .iconBg-active {
+      background-color: #C6100D;
+      border: 1px solid #C6100D;
+    }
+
+    .totalArea {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      justify-content: flex-end;
+
+      .total {
+        margin-right: 20px;
+      }
+
+      .settlementBt {
+        margin: 0;
+      }
+    }
+  }
+}

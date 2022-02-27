@@ -1,0 +1,118 @@
+page {
+  background-color: #f2f2f2;
+}
+
+.publicBookPage {
+
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    z-index: 100;
+
+    .sortWay {
+      display: flex;
+      height: 80px;
+      line-height: 80px;
+      padding: 0 100px;
+      justify-content: space-between;
+
+      .active {
+        color: darkorange;
+      }
+
+      .sortOfPrice {
+        display: flex;
+
+        .sortIcon {
+          display: flex;
+          flex-direction: column;
+          margin: 15px 0 0 10px;
+
+          .active-up {
+            color: darkorange;
+          }
+
+          .active-down {
+            color: darkorange;
+          }
+
+        }
+      }
+    }
+  }
+
+  .content {
+    margin-top: 184px;
+
+    .bookItem {
+      display: flex;
+      background-color: #ffffff;
+      margin-bottom: 20px;
+      padding: 20px;
+
+      .imageWrapper {
+        width: 230px;
+        border: 1px solid black;
+        margin-top: 0;
+        font-size: 0;
+
+        .bookImage {
+          width: 230px;
+          margin-top: 0;
+        }
+      }
+    }
+
+    .bookMessage {
+      position: relative;
+      margin-left: 20px;
+
+      .bookName {
+        font-size: 40px;
+        font-weight: bold;
+      }
+
+      .priceMessage {
+        display: flex;
+        bottom: 0;
+
+        .presentPrice {
+          position: absolute;
+          bottom: 20px;
+          font-size: 40px;
+          color: red;
+        }
+
+        .originalPrice {
+          position: absolute;
+          bottom: 20px;
+          left: 80px;
+          text-decoration: line-through;
+        }
+
+        .shoppingIconBg {
+          position: absolute;
+          width: 80px;
+          height: 80px;
+          border-radius: 40px;
+          background-color: darkorange;
+          text-align: center;
+          color: #ffffff;
+          bottom: 0;
+          right: 0;
+
+          .shoppingIcon {
+            margin-top: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  .content :first-of-type {
+    margin-top: 20px;
+  }
+}

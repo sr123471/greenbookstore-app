@@ -85,6 +85,7 @@ export default class Index extends Component<any, any> {
         <View className='contact'>
           <View className='wechat'>微信号：heshan0314</View>
           <Image
+            className='code'
             mode='aspectFit'
             showMenuByLongpress={true}
             src="https://labeler.oss-cn-hangzhou.aliyuncs.com/img/scan2.png" />

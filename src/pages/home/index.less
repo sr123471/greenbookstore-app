@@ -2,16 +2,121 @@ page {
   background-color: #f2f2f2;
 }
 
-.homePage {
+.professionalBookPage {
 
-  padding: 300px 40px;
-
-  .homeItem {
-    height: 100px;
-    margin-bottom: 50px;
+  .header {
+    display: flex;
+    align-items: center;
     background-color: #ffffff;
-    text-align: center;
-    line-height: 100px;
-    border-radius: 32px;
+    padding: 20px 10px;
+
+    .selectSchool {
+      margin-left: 20px;
+    }
+
+    .icon-right {
+      margin-left: 40px;
+      margin-top: 5px;
+    }
   }
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    position: fixed;
+    top: 84px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .sidebar {
+      width: 190px;
+      background-color: #ffffff;
+      overflow: auto;
+
+      .bookTypeItem {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        text-align: center;
+        background-color: #ffffff;
+      }
+
+      .bookTypeItemActive {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        background-color: #f2f2f2;
+        font-size: 34px;
+        text-align: center;
+      }
+    }
+
+    .rightSide {
+      width: 600px;
+      padding: 30px 20px;
+      overflow: auto;
+
+      .publishBookArea {
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 32px;
+      }
+
+      .academyItem {
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 32px;
+
+        .academyName {
+          font-weight: 600;
+        }
+
+        .majorList {
+          display: flex;
+          // 弹性布局，超出宽度的部分换行
+          flex-wrap: wrap;
+
+          .majorItem {
+            width: 33%;
+            margin-top: 20px;
+            text-align: center;
+
+            .image {
+              height: 100px;
+              width: 100px;
+            }
+
+          }
+        }
+      }
+
+      .examList {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 20px 20px 20px;
+        background-color: #ffffff;
+        border-radius: 32px;
+
+        .examItem {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 33%;
+          margin-top: 20px;
+          font-size: 28px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+// 设置滚动条不显示
+::-webkit-scrollbar {
+  display: none
 }

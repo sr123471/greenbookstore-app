@@ -1,8 +1,8 @@
 import { Component } from 'react'
+import Taro, { useTabItemTap } from '@tarojs/taro'
 import { View, Image, Text } from '@tarojs/components'
 import { AtIcon, AtInputNumber, AtButton } from 'taro-ui'
 import './index.less'
-import Taro, { useTabItemTap } from '@tarojs/taro'
 
 // 当前用户购物车中的图书
 const mockCartList = [

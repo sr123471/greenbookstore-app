@@ -75,7 +75,14 @@ page {
     }
   }
 
-  .bookDetailMessage :first-of-type {
+  // 结构伪类选择器，注意中间要有空格，写法一和写法二效果相同
+  // 写法一，选择bookDetailMessage中的第一个子元素
+  // .bookDetailMessage :first-of-type {
+  //   margin-top: 0;
+  // }
+
+  // 写法二，选择bookDetailMessage中的标签type为View的第一个子元素
+  .bookDetailMessage View:first-of-type {
     margin-top: 0;
   }
 

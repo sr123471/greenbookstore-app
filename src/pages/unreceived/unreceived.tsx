@@ -14,9 +14,33 @@ export default class UnReceived extends Component<any, any> {
     console.log('payment')
   }
 
+  toAllOrder=()=>{
+    Taro.redirectTo({ url: '../allorder/allorder' }).then(() => {
+      console.log("OK！")
+    })
+  }
+  
+  toUnPaid=()=>{
+    Taro.redirectTo({ url: '../unpaid/unpaid' }).then(() => {
+      console.log("OK！")
+    })
+  }
+  
+  toUnSent=()=>{
+    Taro.redirectTo({ url: '../unsent/unsent' }).then(() => {
+      console.log("OK！")
+    })
+  }
+
   render() {
     return (
       <View className='bg'>
+        <View className='nav'>
+          <Text onClick={this.toAllOrder.bind(this)} className='nav1'>全部订单</Text>
+          <Text onClick={this.toUnPaid.bind(this)} className='nav1'>待付款</Text>
+          <Text onClick={this.toUnSent.bind(this)} className='nav1'>待发货</Text>
+          <Text className='nav1 navSelected'>待收货</Text>
+        </View>
         <View className='card' onClick={this.detail.bind(this)}>
           <Image
             className='bookpic'

@@ -3,11 +3,6 @@ import Taro from '@tarojs/taro'
 import { AtInput, AtDivider, AtButton, AtTextarea } from "taro-ui"
 import { View } from '@tarojs/components'
 import Citypicker from '../../components/cityPicker/cityPicker'
-
-import "taro-ui/dist/style/components/input.scss";
-import "taro-ui/dist/style/components/divider.scss";
-import "taro-ui/dist/style/components/button.scss";
-import "taro-ui/dist/style/components/textarea.scss";
 import './addressedit.less'
 
 export default class Address extends Component<any, any> {

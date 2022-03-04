@@ -2,24 +2,45 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtButton, AtIcon } from "taro-ui"
 import { View, Image, Text } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/button.scss";
-import "taro-ui/dist/style/components/icon.scss";
 import './allorder.less'
 
 export default class AllOrder extends Component<any, any> {
 
-  detail(record){
-    Taro.navigateTo({url:'../orderdetail/orderdetail'})
+  detail(record) {
+    Taro.navigateTo({ url: '../orderdetail/orderdetail' })
   }
 
-  pay(){
+  pay() {
     console.log('payment')
+  }
+  
+  toUnPaid=()=>{
+    Taro.redirectTo({ url: '../unpaid/unpaid' }).then(() => {
+      console.log("OK！")
+    })
+  }
+  
+  toUnSent=()=>{
+    Taro.redirectTo({ url: '../unsent/unsent' }).then(() => {
+      console.log("OK！")
+    })
+  }
+  
+  toUnReceived=()=>{
+    Taro.redirectTo({ url: '../unreceived/unreceived' }).then(() => {
+      console.log("OK！")
+    })
   }
 
   render() {
     return (
       <View className='bg'>
+        <View className='nav'>
+          <Text className='nav1 navSelected'>全部订单</Text>
+          <Text onClick={this.toUnPaid.bind(this)} className='nav1'>待付款</Text>
+          <Text onClick={this.toUnSent.bind(this)} className='nav1'>待发货</Text>
+          <Text onClick={this.toUnReceived.bind(this)} className='nav1'>待收货</Text>
+        </View>
         <View className='card' onClick={this.detail.bind(this)}>
           <Image
             className='bookpic'
@@ -36,7 +57,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>付款</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>付款</AtButton>
             </View>
           </View>
         </View>
@@ -57,7 +78,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>查看物流</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>查看物流</AtButton>
             </View>
           </View>
         </View>
@@ -78,7 +99,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>确认收货</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>确认收货</AtButton>
             </View>
           </View>
         </View>
@@ -119,7 +140,7 @@ export default class AllOrder extends Component<any, any> {
             </View>
             <View className='btncontainer'>
               {/* 阻止事件冒泡 */}
-              <AtButton onClick={(e)=>{e.stopPropagation(),this.pay()}} circle={true} className='btn' size='small'>查看物流</AtButton>
+              <AtButton onClick={(e) => { e.stopPropagation(), this.pay() }} circle={true} className='btn' size='small'>查看物流</AtButton>
             </View>
           </View>
         </View>

@@ -1,0 +1,66 @@
+{
+  "setting": {},
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/professionalBook/index",
+          "pathName": "pages/professionalBook/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/bookList/index",
+          "pathName": "pages/bookList/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/search/index",
+          "pathName": "pages/search/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/bookDetail/index",
+          "pathName": "pages/bookDetail/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/purchase/index",
+          "pathName": "pages/purchase/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/cart/index",
+          "pathName": "pages/cart/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/examBook/index",
+          "pathName": "pages/examBook/index",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/home/index",
+          "pathName": "pages/home/index",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

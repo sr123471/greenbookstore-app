@@ -2,9 +2,6 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtAvatar, AtIcon, AtButton } from "taro-ui"
 import { View, Text } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/avatar.scss";
-import "taro-ui/dist/style/components/button.scss";
 import './address.less'
 
 export default class Address extends Component<any, any> {

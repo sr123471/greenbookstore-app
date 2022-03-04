@@ -1,5 +1,15 @@
 export default {
   pages: [
+    // sr
+    'pages/home/index',
+    'pages/cart/index',
+    'pages/bookList/index',
+    'pages/professionalBook/index',
+    'pages/examBook/index',
+    'pages/search/index',
+    'pages/bookDetail/index',
+    'pages/purchase/index',
+    // zcy
     'pages/usercenter/usercenter',
     'pages/addressedit/addressedit',
     'pages/address/address',
@@ -10,7 +20,7 @@ export default {
     'pages/unreceived/unreceived',
     'pages/allorder/allorder',
     'pages/userinfo/userinfo',
-    'pages/index/index',
+    // 'pages/index/index',
     'pages/advice/advice',
     'pages/sellbooks/sellbooks'
   ],
@@ -18,8 +28,13 @@ export default {
     list: [{
       'iconPath': 'resource/home.png',
       'selectedIconPath': 'resource/home_on.png',
-      'pagePath': 'pages/index/index',
+      'pagePath': 'pages/home/index',
       'text': '图书商店'
+    }, {
+      'iconPath': 'resource/cart.png',
+      'selectedIconPath': 'resource/cart_on.png',
+      'pagePath': 'pages/cart/index',
+      'text': '购物车'
     }, {
       'iconPath': 'resource/user.png',
       'selectedIconPath': 'resource/user_on.png',

@@ -2,11 +2,6 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { AtSteps, AtDivider } from "taro-ui"
 import { View, Image } from '@tarojs/components'
-
-import "taro-ui/dist/style/components/steps.scss";
-import "taro-ui/dist/style/components/icon.scss";
-import "taro-ui/dist/style/components/divider.scss";
-
 import './sellbooks.less'
 
 
@@ -90,6 +85,7 @@ export default class Index extends Component<any, any> {
         <View className='contact'>
           <View className='wechat'>微信号：heshan0314</View>
           <Image
+            className='code'
             mode='aspectFit'
             showMenuByLongpress={true}
             src="https://labeler.oss-cn-hangzhou.aliyuncs.com/img/scan2.png" />

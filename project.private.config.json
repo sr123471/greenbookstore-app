@@ -13,8 +13,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "pages/professionalBook/index",
-          "pathName": "pages/professionalBook/index",
+          "name": "pages/home/index",
+          "pathName": "pages/home/index",
           "query": "",
           "scene": null
         },
@@ -47,19 +47,8 @@
           "pathName": "pages/cart/index",
           "query": "",
           "scene": null
-        },
-        {
-          "name": "pages/examBook/index",
-          "pathName": "pages/examBook/index",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/home/index",
-          "pathName": "pages/home/index",
-          "query": "",
-          "scene": null
         }
+        
       ]
     }
   }

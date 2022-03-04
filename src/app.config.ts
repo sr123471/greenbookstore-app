@@ -4,8 +4,6 @@ export default {
     'pages/home/index',
     'pages/cart/index',
     'pages/bookList/index',
-    'pages/professionalBook/index',
-    'pages/examBook/index',
     'pages/search/index',
     'pages/bookDetail/index',
     'pages/purchase/index',

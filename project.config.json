@@ -1,5 +1,6 @@
 {
   "miniprogramRoot": "dist/",
+  "cloudfunctionRoot": "cloudfunctions/",
   "projectname": "greenbookstore-app",
   "description": "绿色书屋小程序端",
   "appid": "wxaf440938f8a30993",
@@ -44,5 +45,7 @@
   "compileType": "miniprogram",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate",
+  "libVersion": "2.14.1",
   "condition": {}
 }

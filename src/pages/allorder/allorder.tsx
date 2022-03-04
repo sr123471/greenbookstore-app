@@ -13,34 +13,10 @@ export default class AllOrder extends Component<any, any> {
   pay() {
     console.log('payment')
   }
-  
-  toUnPaid=()=>{
-    Taro.redirectTo({ url: '../unpaid/unpaid' }).then(() => {
-      console.log("OK！")
-    })
-  }
-  
-  toUnSent=()=>{
-    Taro.redirectTo({ url: '../unsent/unsent' }).then(() => {
-      console.log("OK！")
-    })
-  }
-  
-  toUnReceived=()=>{
-    Taro.redirectTo({ url: '../unreceived/unreceived' }).then(() => {
-      console.log("OK！")
-    })
-  }
 
   render() {
     return (
       <View className='bg'>
-        <View className='nav'>
-          <Text className='nav1 navSelected'>全部订单</Text>
-          <Text onClick={this.toUnPaid.bind(this)} className='nav1'>待付款</Text>
-          <Text onClick={this.toUnSent.bind(this)} className='nav1'>待发货</Text>
-          <Text onClick={this.toUnReceived.bind(this)} className='nav1'>待收货</Text>
-        </View>
         <View className='card' onClick={this.detail.bind(this)}>
           <Image
             className='bookpic'

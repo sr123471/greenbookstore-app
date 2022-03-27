@@ -4,40 +4,34 @@ import { View, Image, Text } from '@tarojs/components'
 import { AtIcon, AtInputNumber, AtButton } from 'taro-ui'
 import './index.less'
 
-// 当前用户购物车中的图书
-const mockCartList = [
-  {
-    id: 1,
-    bookName: '马克思主义基本原理概论',
-    presentPrice: 5,
-    inventory: 8,
-    imgURL: 'https://s3.bmp.ovh/imgs/2022/02/42d913af68766c41.png',
-    selectQuantity: 1,
-    isSelect: false,
-  },
-  {
-    id: 2,
-    bookName: '毛泽东思想和中国特色社会主义理论体系概论',
-    presentPrice: 7,
-    inventory: 1,
-    imgURL: 'https://s3.bmp.ovh/imgs/2022/02/03db656daa4eed80.png',
-    selectQuantity: 1,
-    isSelect: false,
-  },
-]
-
 export default class Index extends Component {
 
   state = {
-    value: 1,
+    showContent: false,
     isManagement: true,
-    cartList: mockCartList,
+    cartList: [],
     selectAll: false,
     selectItemNum: 0,
     totalPrice: 0,
   };
 
-  componentWillMount() { }
+  componentWillMount() {
+    Taro.showLoading();
+    Taro.cloud.callFunction({
+      name: 'school',
+      data: {
+        action: 'getCartList',
+        userId: '1',
+      }
+    }).then(res => {
+      console.log(res)
+      this.setState({
+        cartList: res.result?.cartList,
+        showContent: true,
+      })
+      Taro.hideLoading();
+    })
+  }
 
   componentDidMount() { }
 
@@ -63,9 +57,10 @@ export default class Index extends Component {
 
   // 计算合计价格
   calculateTotalPrice(cartList) {
+    // reduce从数组的第一项开始归并
     return cartList.reduce((previousValue, currentValue) => {
-      return (previousValue.isSelect ? previousValue.presentPrice : 0) * previousValue.selectQuantity + (currentValue.isSelect ? currentValue.presentPrice : 0) * currentValue.selectQuantity;
-    });
+      return previousValue + (currentValue.isSelect ? currentValue.presentPrice : 0) * currentValue.selectQuantity;
+    }, 0);
   }
 
   // 计算选中的商品数量
@@ -74,20 +69,27 @@ export default class Index extends Component {
       { ...item, isSelect: item.isSelect ? 1 : 0 }
     ));
     return newCartList.reduce((previousValue, currentValue) => {
-      return previousValue.isSelect + currentValue.isSelect;
-    });
+      return previousValue + currentValue.isSelect;
+    }, 0);
   }
 
+  // // 选中的商品列表
+  // selectedBookList = (type) => {
+  //   const { cartList } = this.state;
+  //   if (type === 'delete') {
+
+  //   }
+  // }
+
   // 增加或减少商品购买数量
-  handleChange = (id, value) => {
+  handleChange = (ISBN, value) => {
     const { cartList } = this.state;
     const newCartList = cartList.map(item =>
-      ({ ...item, selectQuantity: item.id === id ? value : item.selectQuantity })
+      ({ ...item, selectQuantity: item.ISBN === ISBN ? value : item.selectQuantity })
     )
     const totalPrice = this.calculateTotalPrice(newCartList);
     const selectItemNum = this.calculateSelectItemNum(newCartList);
     this.setState({
-      value,
       cartList: newCartList,
       totalPrice,
       selectItemNum,
@@ -95,10 +97,10 @@ export default class Index extends Component {
   }
 
   // 选择购物车中的商品,type为selectOne时是点击了一个商品，为selectAll时点击了全选按钮
-  handleSelectItem = (id, type) => {
+  handleSelectItem = (ISBN, type) => {
     const { cartList, selectAll } = this.state;
     const newCartList = cartList.map(item => (
-      { ...item, isSelect: type === 'selectOne' ? (item.id === id ? !item.isSelect : item.isSelect) : !selectAll }
+      { ...item, isSelect: type === 'selectOne' ? (item.ISBN === ISBN ? !item.isSelect : item.isSelect) : !selectAll }
     ));
     const totalPrice = this.calculateTotalPrice(newCartList);
     const selectItemNum = this.calculateSelectItemNum(newCartList);
@@ -113,7 +115,7 @@ export default class Index extends Component {
 
   // 结算或者删除购物车中商品
   handleFinishOrDelete = () => {
-    const { isManagement, selectItemNum } = this.state;
+    const { cartList, isManagement, selectItemNum } = this.state;
     if (isManagement) {
       if (selectItemNum === 0) {
         Taro.showToast({
@@ -121,7 +123,12 @@ export default class Index extends Component {
           icon: 'none',
         })
       } else {
-        // feat：后端结算商品接口
+        // 结算商品
+        const selectedBookList = cartList.filter(item =>
+          item.isSelect === true
+        )
+        Taro.setStorageSync('settleList', selectedBookList);
+        Taro.navigateTo({ url: '/pages/purchase/index' })
       }
     } else {
       if (selectItemNum === 0) {
@@ -130,19 +137,51 @@ export default class Index extends Component {
           icon: 'none',
         })
       } else {
-        // feat：后端删除商品接口
+        // 删除商品
+        Taro.showLoading();
+        const ISBNList = [];
+        cartList.forEach(item => {
+          if (item.isSelect === true) {
+            ISBNList.push(item.ISBN);
+          }
+        });
+        const unselectedBookList = cartList.filter(item =>
+          item.isSelect === false
+        )
+        Taro.cloud.callFunction({
+          name: 'school',
+          data: {
+            action: 'deleteCart',
+            userId: '1',
+            ISBNList,
+          }
+        }).then(res => {
+          this.setState({ cartList: unselectedBookList })
+          Taro.hideLoading();
+        })
       }
     }
   }
 
   render() {
-    const { value, isManagement, cartList, selectAll, selectItemNum, totalPrice } = this.state;
+    const {
+      showContent,
+      isManagement,
+      cartList,
+      selectAll,
+      selectItemNum,
+      totalPrice
+    } = this.state;
 
     return (
       <View className='cartPage'>
         {
-          // 购物车为空或不为空
-          cartList.length === 0 ?
+          /*
+          showContent的作用是等待接口调用获取到购物车列表
+          再去判断购物车为空还是不为空，否则就算用户购物车有商品，
+          会出现一上来就展示空购物车状态，再展示商品列表
+          */
+          showContent && cartList?.length === 0 ?
             <View className='emptyCart'>
               <AtIcon prefixClass='icon' value='gouwuchekong' size='80'></AtIcon>
               <View>购物车是空的</View>
@@ -153,9 +192,9 @@ export default class Index extends Component {
                 <Text className='manageText' onClick={this.handleManage}>{isManagement ? '管理' : '完成'}</Text>
               </View>
               <View className='itemList'>
-                {cartList.map(item =>
+                {cartList?.map(item =>
                   <View className='item'>
-                    <View className={item.isSelect === true ? 'iconBg iconBg-active' : 'iconBg'} onClick={this.handleSelectItem.bind(this, item.id, 'selectOne')}>
+                    <View className={item.isSelect === true ? 'iconBg iconBg-active' : 'iconBg'} onClick={this.handleSelectItem.bind(this, item.ISBN, 'selectOne')}>
                       <AtIcon className='icon-check' value='check' size='15'></AtIcon>
                     </View>
                     <View className='bookArea' onClick={this.handleLinkToBookDetailPage}>
@@ -171,11 +210,11 @@ export default class Index extends Component {
                       className='quantity'
                       type='digit'
                       min={1}
-                      max={item.inventory}
+                      max={item.stock}
                       step={1}
                       width={60}
-                      value={value}
-                      onChange={this.handleChange.bind(this, item.id)}
+                      value={item.selectQuantity}
+                      onChange={this.handleChange.bind(this, item.ISBN)}
                     />
                   </View>
                 )}

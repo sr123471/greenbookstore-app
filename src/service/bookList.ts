@@ -1,0 +1,1 @@
+import Taro, { getCurrentInstance } from '@tarojs/taro'

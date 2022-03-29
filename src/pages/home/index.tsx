@@ -23,19 +23,17 @@ export default class Index extends Component {
   state = {
     showDrawer: false,
     schoolList: [],
-    academyList: [],
-    examList: [],
+    currentSchoolData: {},
     currentSchool: '',
     currentBookType: 1,
   }
 
-  // 如果不用async和await，则setState方法会比callFunction方法先执行
   componentWillMount() {
     // 当前学校要根据用户信息来
     const currentSchool = Taro.getStorageSync('currentSchool');
     this.setState({ currentSchool })
 
-    // 初始化首页信息，包括学校、学院、专业、考试书籍种类
+    // 初始化首页信息，包括学校列表和当前选中的学校信息
     Taro.cloud.callFunction({
       name: 'school',
       data: {
@@ -43,11 +41,9 @@ export default class Index extends Component {
         schoolName: currentSchool,
       }
     }).then(res => {
-      console.log(res)
       this.setState({
-        schoolList: res.result.schoolData,
-        academyList: res.result.academyData.academyList,
-        examList: res.result.examData.data,
+        schoolList: res.result.schoolList,
+        currentSchoolData: res.result.currentSchoolData,
       })
     })
   }
@@ -76,7 +72,7 @@ export default class Index extends Component {
     if (schoolList[index] !== currentSchool) {
       Taro.setStorageSync('currentSchool', schoolList[index]);
       this.setState({ currentSchool: schoolList[index] })
-      // 更新学校时，重新请求学院、专业、考试书籍种类
+      // 更新学校时，重新请求当前选中的学校信息
       Taro.cloud.callFunction({
         name: 'school',
         data: {
@@ -85,8 +81,7 @@ export default class Index extends Component {
         }
       }).then(res => {
         this.setState({
-          academyList: res.result.academyData.academyList,
-          examList: res.result.examData.data,
+          currentSchoolData: res.result.currentSchoolData,
         })
       })
     }
@@ -104,7 +99,7 @@ export default class Index extends Component {
   }
 
   render() {
-    const { showDrawer, schoolList, academyList, examList, currentSchool, currentBookType } = this.state;
+    const { showDrawer, schoolList, currentSchoolData, currentSchool, currentBookType } = this.state;
 
     return (
       <View className='professionalBookPage'>
@@ -137,7 +132,7 @@ export default class Index extends Component {
             {/* 公共课书籍 */}
             {
               currentBookType === 1 &&
-              <View className='publishBookArea' onClick={this.handleLinkToBookListPage.bind(this, 'publicBookList', 0, '公共课书籍')}>
+              <View className='publishBookArea' onClick={this.handleLinkToBookListPage.bind(this, 'publicBook', 0, '公共课书籍')}>
                 <AtIcon prefixClass='icon' value='shujijiaocai-copy' size='50'></AtIcon>
                 <View className='publishBookText'>公共课书籍</View>
               </View>
@@ -145,14 +140,14 @@ export default class Index extends Component {
             {/* 专业课书籍 */}
             {
               currentBookType === 2 &&
-              academyList?.map(item =>
+              currentSchoolData?.academyList.map(item =>
                 <View className='academyItem' key={item.academyId}>
                   <View className='academyName' key={item.academyId}>{item.academyName}</View>
                   <View className='majorList'>
-                    {item.majorList?.map(item =>
-                      <View className='majorItem' onClick={this.handleLinkToBookListPage.bind(this, 'majorBookList', item.academyName, item.majorName)}>
+                    {item.majorList?.map(i =>
+                      <View className='majorItem' onClick={this.handleLinkToBookListPage.bind(this, 'majorBook', item.academyName, i.majorName)}>
                         <AtIcon prefixClass='icon' value='shuji-copy' size='50'></AtIcon>
-                        <View className='text'>{item.majorName}</View>
+                        <View className='text'>{i.majorName}</View>
                       </View>
                     )}
                   </View>
@@ -164,8 +159,8 @@ export default class Index extends Component {
               currentBookType === 3 &&
               <View className='examList'>
                 {
-                  examList?.map(item =>
-                    <View className='examItem' onClick={this.handleLinkToBookListPage.bind(this, 'examBookList', 0, item.examName)} key={item._id}>
+                  currentSchoolData?.examList.map(item =>
+                    <View className='examItem' onClick={this.handleLinkToBookListPage.bind(this, 'examBook', 0, item.examName)} key={item.examId}>
                       <AtIcon prefixClass='icon' value='shijuan' size='45'></AtIcon>
                       <View>{item.examName}</View>
                     </View>

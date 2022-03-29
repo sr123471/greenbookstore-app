@@ -10,17 +10,18 @@ export default class Index extends Component {
     currentBookType: Taro.getStorageSync('currentBookType'),
     value: '',
     activeSort: 'synthesis',
-    activeSortOfPrice_up: false,
-    activeSortOfPrice_down: false,
+    activeSortOfPrice_asc: false,
+    activeSortOfPrice_desc: false,
     bookList: [],
     offset: 0,
-    total: 0,
     limit: 4,
+    total: 0,
     isActivityIndicatorOpened: false,
   }
 
   componentWillMount() {
-    const { currentSchool, currentBookType, offset, limit } = this.state;
+    this.setState({ value: getCurrentInstance().router.params.bookName })
+    const { currentSchool, currentBookType, activeSort, offset, limit } = this.state;
     Taro.setNavigationBarTitle({
       title: getCurrentInstance().router.params.type // 接收路由的传参
     })
@@ -34,12 +35,14 @@ export default class Index extends Component {
         bookType: currentBookType,
         academyName: getCurrentInstance().router.params.academyName,
         detailType: getCurrentInstance().router.params.type,
+        bookName: getCurrentInstance().router.params.bookName,
         offset: offset,
         limit: limit,
+        sortType: activeSort,
       }
     }).then(res => {
       this.setState({
-        bookList: res.result[currentBookType],
+        bookList: res.result.data,
         offset: offset + limit,
         total: res.result.total,
       })
@@ -56,17 +59,72 @@ export default class Index extends Component {
   componentDidHide() { }
 
   handleToSearchPage = () => {
-    Taro.navigateTo({ url: '/pages/search/index' });
+    const { value } = this.state;
+    if (value === undefined) {
+      Taro.navigateTo({ url: '/pages/search/index' });
+    } else {
+      Taro.navigateBack();
+    }
   }
 
   onChange = () => { }
 
   handleChangeSortWay = (value) => {
-    const { activeSort, activeSortOfPrice_up, activeSortOfPrice_down } = this.state;
+    const { activeSort, activeSortOfPrice_asc, activeSortOfPrice_desc, } = this.state;
     this.setState({
       activeSort: value,
-      activeSortOfPrice_up: value !== 'price' ? false : activeSort !== 'price' ? true : !activeSortOfPrice_up,
-      activeSortOfPrice_down: value !== 'price' ? false : activeSort !== 'price' ? false : !activeSortOfPrice_down,
+      activeSortOfPrice_asc: value !== 'price' ? false : activeSort !== 'price' ? true : !activeSortOfPrice_asc,
+      activeSortOfPrice_desc: value !== 'price' ? false : activeSort !== 'price' ? false : !activeSortOfPrice_desc,
+      offset: 0,
+    }, () => {
+      const { activeSort, activeSortOfPrice_asc, currentSchool, currentBookType, offset, limit } = this.state;
+      if (activeSort === 'price') {
+        Taro.showLoading();
+        Taro.cloud.callFunction({
+          name: 'school',
+          data: {
+            action: 'getBookList',
+            schoolName: currentSchool,
+            bookType: currentBookType,
+            academyName: getCurrentInstance().router.params.academyName,
+            detailType: getCurrentInstance().router.params.type,
+            bookName: getCurrentInstance().router.params.bookName,
+            offset: offset,
+            limit: limit,
+            sortType: activeSortOfPrice_asc === true ? 'asc' : 'desc',
+          }
+        }).then(res => {
+          this.setState({
+            bookList: res.result.data,
+            offset: offset + limit,
+            total: res.result.total,
+          })
+          Taro.hideLoading();
+        })
+      } else {
+        Taro.showLoading();
+        Taro.cloud.callFunction({
+          name: 'school',
+          data: {
+            action: 'getBookList',
+            schoolName: currentSchool,
+            bookType: currentBookType,
+            academyName: getCurrentInstance().router.params.academyName,
+            detailType: getCurrentInstance().router.params.type,
+            bookName: getCurrentInstance().router.params.bookName,
+            offset: offset,
+            limit: limit,
+            sortType: 'synthesis',
+          }
+        }).then(res => {
+          this.setState({
+            bookList: res.result.data,
+            offset: offset + limit,
+            total: res.result.total,
+          })
+          Taro.hideLoading();
+        })
+      }
     })
   }
 
@@ -76,6 +134,7 @@ export default class Index extends Component {
     return (item) => {
       if (!canClick) return;
       canClick = false;
+      // 判断是否已在购物车中
       Taro.cloud.callFunction({
         name: 'school',
         data: {
@@ -118,7 +177,7 @@ export default class Index extends Component {
   // onScrollToLower方法存在问题，靠近底部时会多次调用，而不是只调用一次，要做触发限制
   // 通过函数节流来解决，运用到了闭包
   scrollToBottom = () => {
-    const { currentSchool, currentBookType, bookList, offset, total, limit } = this.state;
+    const { currentSchool, currentBookType, activeSort, activeSortOfPrice_asc, bookList, offset, total, limit } = this.state;
     // 如果偏移量大于等于数据库中书本的总数，则说明已显示完所有的书本，直接return
     if (offset >= total) return;
     let canLoading = true;
@@ -133,12 +192,15 @@ export default class Index extends Component {
           action: 'getBookList',
           schoolName: currentSchool,
           bookType: currentBookType,
+          academyName: getCurrentInstance().router.params.academyName,
           detailType: getCurrentInstance().router.params.type,
+          bookName: getCurrentInstance().router.params.bookName,
           offset: offset,
           limit: limit,
+          sortType: activeSort === 'synthesis' ? 'synthesis' : activeSortOfPrice_asc === true ? 'asc' : 'desc',
         }
       }).then(res => {
-        const newBookList = bookList.concat(res.result[currentBookType]);
+        const newBookList = bookList.concat(res.result.data);
         this.setState({
           bookList: newBookList,
           offset: offset + limit,
@@ -151,9 +213,10 @@ export default class Index extends Component {
 
   render() {
     const {
+      value,
       activeSort,
-      activeSortOfPrice_up,
-      activeSortOfPrice_down,
+      activeSortOfPrice_asc,
+      activeSortOfPrice_desc,
       bookList,
       offset,
       total,
@@ -169,7 +232,7 @@ export default class Index extends Component {
         <View className='header'>
           <View onClick={this.handleToSearchPage}>
             <AtSearchBar
-              value={this.state.value}
+              value={value}
               onChange={this.onChange.bind(this)}
               placeholder='搜索书名、作者、ISBN'
               disabled
@@ -191,12 +254,12 @@ export default class Index extends Component {
               <View className={activeSort === 'price' ? 'active' : ''}>价格</View>
               <View className='sortIcon'>
                 <AtIcon
-                  className={activeSortOfPrice_up === true ? 'active-up' : ''}
+                  className={activeSortOfPrice_asc === true ? 'active-up' : ''}
                   value='chevron-up'
                   size='15'
                 ></AtIcon>
                 <AtIcon
-                  className={activeSortOfPrice_down === true ? 'active-down' : ''}
+                  className={activeSortOfPrice_desc === true ? 'active-down' : ''}
                   value='chevron-down'
                   size='15'
                 ></AtIcon>
@@ -207,27 +270,25 @@ export default class Index extends Component {
         <View className='content'>
           {
             bookList?.map(item =>
-              item.stock !== 0 ? (
-                <View className='bookItem' key={item.ISBN}>
-                  <View className='bookArea' onClick={this.handleLinkBookPage.bind(this, item)}>
-                    <View className='imageWrapper'>
-                      <Image className='bookImage' src={item.imgURL} mode='heightFix'></Image>
-                    </View>
-                    <View className='bookMessage'>
-                      <View className='bookName'>{item.bookName}</View>
-                      <View>作者：{item.author}</View>
-                      <View>出版社：{item.press}</View>
-                      <View className='priceMessage'>
-                        <View className='presentPrice'>¥ {item.presentPrice}</View>
-                        <View className='originalPrice'>{item.originalPrice}</View>
-                      </View>
-                    </View>
+              <View className='bookItem' key={item.ISBN}>
+                <View className='bookArea' onClick={this.handleLinkBookPage.bind(this, item)}>
+                  <View className='imageWrapper'>
+                    <Image className='bookImage' src={item.imgURL} mode='heightFix'></Image>
                   </View>
-                  <View className='shoppingIconBg' onClick={this.handleAddToCart().bind(this, item)}>
-                    <AtIcon className='shoppingIcon' value='shopping-cart' size='20'></AtIcon>
+                  <View className='bookMessage'>
+                    <View className='bookName'>{item.bookName}</View>
+                    <View>作者：{item.author}</View>
+                    <View>出版社：{item.press}</View>
+                    <View className='priceMessage'>
+                      <View className='presentPrice'>¥ {item.presentPrice}</View>
+                      <View className='originalPrice'>{item.originalPrice}</View>
+                    </View>
                   </View>
                 </View>
-              ) : ''
+                <View className='shoppingIconBg' onClick={this.handleAddToCart().bind(this, item)}>
+                  <AtIcon className='shoppingIcon' value='shopping-cart' size='20'></AtIcon>
+                </View>
+              </View>
             )
           }
         </View>

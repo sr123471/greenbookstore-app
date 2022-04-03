@@ -4,20 +4,6 @@ import { View, Image, Text } from '@tarojs/components'
 import { AtIcon, AtDivider } from 'taro-ui'
 import './index.less'
 
-const mockBook =
-{
-  id: 1,
-  name: '马克思主义基本原理概论',
-  author: '本书编写组',
-  publisher: '高等教育出版社',
-  publishTime: 2013,
-  ISBN: '1111111111',
-  originalPrice: 23,
-  presentPrice: 5,
-  inventory: 8,
-  imgURL: 'https://s3.bmp.ovh/imgs/2022/02/42d913af68766c41.png'
-}
-
 const arr = [
   {
     id: 1,
@@ -25,44 +11,59 @@ const arr = [
   },
   {
     id: 2,
-    title: '快递免费',
+    title: '急速取货',
   },
   {
     id: 3,
-    title: '急速发货',
-  },
-  {
-    id: 4,
     title: '消毒清洁',
   },
 ]
 
-const bookDetailMessageList = [
-  {
-    key: '作者',
-    value: mockBook.author,
-  },
-  {
-    key: '出版社',
-    value: mockBook.publisher,
-  },
-  {
-    key: 'ISBN',
-    value: mockBook.ISBN,
-  },
-  {
-    key: '出版时间',
-    value: mockBook.publishTime,
-  },
-  {
-    key: '定价',
-    value: mockBook.originalPrice + '元',
-  },
-]
-
 export default class Index extends Component {
+  state = {
+    book: Taro.getStorageSync('currentBook'),
+    bookDetailMessageList: [],
+    hasBookInCart: false,
+  }
 
-  componentWillMount() { }
+  componentWillMount() {
+    const { book } = this.state;
+    this.setState({
+      bookDetailMessageList: [
+        {
+          key: '作者',
+          value: book.author,
+        },
+        {
+          key: '出版社',
+          value: book.press,
+        },
+        {
+          key: 'ISBN',
+          value: book.ISBN,
+        },
+        {
+          key: '出版时间',
+          value: book.publishTime,
+        },
+        {
+          key: '定价',
+          value: book.originalPrice + '元',
+        },
+      ]
+    });
+
+    Taro.cloud.callFunction({
+      name: 'school',
+      data: {
+        action: 'hasBookInCart',
+        userId: '1',
+        ISBN: book.ISBN,
+      }
+    }).then(res => {
+      this.setState({ hasBookInCart: res.result })
+    })
+  }
 
   componentDidMount() { }
 
@@ -73,28 +74,62 @@ export default class Index extends Component {
   componentDidHide() { }
 
   handleLinkToCartPage = () => {
-    //Taro.navigateTo({ url: '/pages/cart/index' })
+    Taro.switchTab({ url: '/pages/cart/index' })
   }
 
+  // 防止用户在短时间内快速点击导致调用多次接口，需要做数据节流
   handleAddToCart = () => {
+    const { book, hasBookInCart } = this.state;
+    let canClick = true;
 
+    return () => {
+      if (!canClick) return;
+      canClick = false;
+      if (hasBookInCart === false) {
+        Taro.cloud.callFunction({
+          name: 'school',
+          data: {
+            action: 'addCart',
+            userId: '1',
+            book,
+          }
+        }).then(res => {
+          this.setState({ hasBookInCart: true });
+          Taro.showToast({
+            title: '已加入购物车',
+            icon: 'success',
+          });
+          canClick = true;
+        })
+      } else {
+        Taro.showToast({
+          title: '该书已存在购物车中哦',
+          icon: 'none',
+        });
+        canClick = true;
+      }
+    };
   }
 
   handleLinkToPurchasePage = () => {
+    const { book } = this.state;
+    Taro.setStorageSync('settleList', [book]);
     Taro.navigateTo({ url: '/pages/purchase/index' })
   }
 
   render() {
+    const { book, bookDetailMessageList } = this.state;
+
     return (
       <View className='bookPage'>
         <View className='bookImageArea'>
-          <Image className='bookImage' src={mockBook.imgURL} mode='heightFix'></Image>
+          <Image className='bookImage' src={book.imgURL} mode='heightFix'></Image>
         </View>
         <View className='bookMessage'>
-          <View className='bookName'>{mockBook.name}</View>
+          <View className='bookName'>{book.bookName}</View>
           <View className='priceMessage'>
-            <View className='presentPrice'>¥ {mockBook.presentPrice}</View>
-            <View className='originalPrice'>{mockBook.originalPrice}</View>
+            <View className='presentPrice'>¥ {book.presentPrice}</View>
+            <View className='originalPrice'>{book.originalPrice}</View>
           </View>
           <View className='saleMessage'>
             {
@@ -122,7 +157,7 @@ export default class Index extends Component {
           <View className='linkToCartBt at-col' onClick={this.handleLinkToCartPage}>
             <AtIcon className='shoppingIcon' value='shopping-cart' size='30'></AtIcon>
           </View>
-          <View className='addToCartBt at-col' onClick={this.handleAddToCart}>加入购物车</View>
+          <View className='addToCartBt at-col' onClick={this.handleAddToCart()}>加入购物车</View>
           <View className='buyBt at-col' onClick={this.handleLinkToPurchasePage}>立即购买</View>
         </View>
       </View>

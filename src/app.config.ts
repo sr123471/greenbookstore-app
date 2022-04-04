@@ -13,8 +13,6 @@ export default {
     'pages/address/address',
     'pages/orderdetail/orderdetail',
     'pages/mystar/mystar',
-    'pages/unsent/unsent',
-    'pages/unpaid/unpaid',
     'pages/unreceived/unreceived',
     'pages/allorder/allorder',
     'pages/userinfo/userinfo',

@@ -14,7 +14,7 @@ export default {
     'pages/orderdetail/orderdetail',
     'pages/mystar/mystar',
     'pages/unreceived/unreceived',
-    'pages/allorder/allorder',
+    'pages/order/order',
     'pages/userinfo/userinfo',
     // 'pages/index/index',
     'pages/advice/advice',

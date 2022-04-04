@@ -16,14 +16,19 @@ function UserCenter() {
         </View>
       </View>
       <View className='container1'>
-        <View className='order' onClick={toAllOrder}>
+        <View onClick={toAllOrder}>
           <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/allorder.png' />
           <View>全部订单</ View>
         </View>
 
-        <View className='order' onClick={toUnReceived}>
+        <View onClick={toUnReceived}>
           <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/package.png' />
           <View>待取货</View>
+        </View>
+
+        <View onClick={toDone}>
+          <Image className='icon1' src='https://labeler.oss-cn-hangzhou.aliyuncs.com/img/star.png' />
+          <View>已完成</View>
         </View>
 
         <View onClick={toUserInfo}>
@@ -64,33 +69,40 @@ const toAdvice = () => {
 }
 
 const toAllOrder = () => {
-  Taro.navigateTo({ url: '../allorder/allorder' }).then(() => {
+  Taro.navigateTo({
+    url: '../order/order',
+    success: function (res) {
+      // 通过eventChannel向被打开页面传送数据
+      res.eventChannel.emit('toOrder', { showMode: 'allorder' })
+    }
+  }).then(() => {
     console.log("OK！")
   })
 }
 
-const toUnPaid = () => {
-  Taro.navigateTo({ url: '../unpaid/unpaid' }).then(() => {
-    console.log("OK！")
-  })
-}
-
-const toUnSent = () => {
-  Taro.navigateTo({ url: '../unsent/unsent' }).then(() => {
+const toDone = () => {
+  Taro.navigateTo({
+    url: '../order/order',
+    success: function (res) {
+      // 通过eventChannel向被打开页面传送数据
+      res.eventChannel.emit('toOrder', { showMode: 'done' })
+    }
+  }).then(() => {
     console.log("OK！")
   })
 }
 
 const toUnReceived = () => {
-  Taro.navigateTo({ url: '../unreceived/unreceived' }).then(() => {
+  Taro.navigateTo({
+    url: '../order/order',
+    success: function (res) {
+      // 通过eventChannel向被打开页面传送数据
+      res.eventChannel.emit('toOrder', { showMode: 'unReceived' })
+    }
+  }).then(() => {
     console.log("OK！")
   })
 }
 
-const toMyStar = () => {
-  Taro.navigateTo({ url: '../mystar/mystar' }).then(() => {
-    console.log("OK！")
-  })
-}
 
 export default UserCenter

@@ -1,5 +1,5 @@
-const cloud = require('wx-server-sdk')
-
+const cloud = require('wx-server-sdk');
+const rp = require('request-promise');
 cloud.init()
 
 // 初始化首页信息，将获取学校、学院、专业、考试书籍种类写在一起
@@ -214,10 +214,82 @@ const deleteCart = async (event) => {
     })
 }
 
+
+//获取订单信息
+const getOrderList = async (event) => {
+  const db = cloud.database();
+  const _ = db.command;
+  let ret = [];
+  let orderData = [];
+  let book_id = [];
+  let bookData = [];
+
+  //查询订单
+  await db.collection('order')
+    .where({ open_id: event.open_id })
+    .get()
+    .then((res) => {
+      orderData = res.data;
+      orderData.forEach((item) => {
+        book_id.push(item.book_id);
+      })
+    })
+
+  //查询订单的书籍
+  await db.collection('book')
+    .where({ _id: _.in(book_id) })
+    .get()
+    .then((res) => {
+      bookData = res.data;
+
+      let map = new Map();
+
+      for (let i = 0; i < bookData.length; i++) {
+        map.set(bookData[i]._id, bookData[i]);
+      }
+
+      for (let i = 0; i < orderData.length; i++) {
+        let obj = Object.assign({}, map.get(orderData[i].book_id), orderData[i])
+        ret.push(obj);
+      }
+    })
+
+  return ret;
+}
+
+const login = async (event) => {
+  let rst=null;
+
+  let options = {
+    uri: 'https://api.weixin.qq.com/sns/jscode2session',
+    qs: {
+      appid: 'wxaf440938f8a30993',
+      secret: 'b5e31f08f66706ed9c624a0bea95ca07',
+      js_code: event.code,
+      grant_type: 'authorization_code'
+    },
+    headers: {
+      'User-Agent': 'Request-Promise'
+    },
+    json: true // Automatically parses the JSON string in the response
+  };
+
+  console.log(options)
+
+  await rp(options).then((res) => {
+    rst=res.openid;
+  })
+
+  return rst
+}
+
 // 云函数入口函数
 exports.main = async (event, context) => {
 
   switch (event.action) {
+    case 'login': {
+      return login(event)
+    }
     case 'getHomepageInitialData': {
       return getHomepageInitialData(event)
     }
@@ -238,6 +310,9 @@ exports.main = async (event, context) => {
     }
     case 'deleteCart': {
       return deleteCart(event)
+    }
+    case 'getOrderList': {
+      return getOrderList(event)
     }
     default: {
       return '云函数调用失败'

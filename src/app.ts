@@ -13,7 +13,8 @@ class App extends Component {
     Taro.setStorageSync('currentSchool', '浙江外国语学院');
   }
 
-  componentDidShow() { }
+  componentDidShow() { 
+  }
 
   componentDidHide() { }
 

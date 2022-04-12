@@ -18,7 +18,7 @@ function OrderCard(props) {
     <View className='card' onClick={detail.bind(order)}>
       <Image
         className='bookpic'
-        src={order.img}
+        src={order.imgURL}
       />
       <View className='bookinfo'>
         <AtIcon className='arrow' value='chevron-right' size='20' color='#8c8c8c' />
@@ -40,14 +40,14 @@ function OrderCard(props) {
 
 interface OrderInfo {
   bookName: string;
-  img: string;
+  imgURL: string;
   price: number;
   status: string;
 }
 
 interface OrderShow {
   bookName: string;
-  img: string;
+  imgURL: string;
   priceInt: string;
   priceDecimal: string;
   status: string;
@@ -55,7 +55,7 @@ interface OrderShow {
 
 function useOrder(props: OrderInfo): OrderShow {
   const [bookName, setBookName] = useState(props.bookName);
-  const [img, setImg] = useState(props.img);
+  const [imgURL, setImg] = useState(props.imgURL);
 
   let int = Math.floor(props.price);
   let decimal = (props.price - int).toFixed(2);
@@ -66,7 +66,7 @@ function useOrder(props: OrderInfo): OrderShow {
 
   const [status, setStatus] = useState(props.status);
 
-  return { bookName, img, priceInt, priceDecimal, status };
+  return { bookName, imgURL, priceInt, priceDecimal, status };
 }
 
 export default OrderCard

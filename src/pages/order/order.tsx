@@ -4,23 +4,26 @@ import { useReady } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import OrderCard from '../../components/orderCard/orderCard'
 import './order.less'
+import { useEffect } from 'react'
+import { cloudCall, dataCreator } from '../../service/order'
 
-let
-  order = [{
-    img: 'https://img.pddpic.com/mms-material-img/2021-06-15/016e1bf5-2f24-4250-8a07-eaa413810c24.jpeg.a.jpeg',
-    bookName: '彷徨',
-    price: 10.50,
-    status: 'done'
-  }, {
-    img: 'https://img.pddpic.com/mms-material-img/2021-06-15/016e1bf5-2f24-4250-8a07-eaa413810c24.jpeg.a.jpeg',
-    bookName: '彷徨',
-    price: 0.00,
-    status: 'unReceived'
-  }]
+// let
+//   order = [{
+//     img: 'https://img.pddpic.com/mms-material-img/2021-06-15/016e1bf5-2f24-4250-8a07-eaa413810c24.jpeg.a.jpeg',
+//     bookName: '彷徨',
+//     price: 10.50,
+//     status: 'done'
+//   }, {
+//     img: 'https://img.pddpic.com/mms-material-img/2021-06-15/016e1bf5-2f24-4250-8a07-eaa413810c24.jpeg.a.jpeg',
+//     bookName: '彷徨',
+//     price: 0.00,
+//     status: 'unReceived'
+//   }]
 
 export default function Order() {
 
   const [showMode, setShowMode] = useState('allorder')
+  const [order, setOrder] = useState([]);
 
   useReady(() => {
     let pages = getCurrentPages()
@@ -30,6 +33,14 @@ export default function Order() {
       setShowMode(data.showMode)
     })
   })
+
+  useEffect(() => {
+    let data = dataCreator('getOrderList', '1', 'allorder')
+    cloudCall('school', data).then((res) => {
+      setOrder(res.result);
+      console.log(res.result);
+    })
+  }, [])
 
   const toAllOrder = () => {
     if (showMode !== 'allorder')

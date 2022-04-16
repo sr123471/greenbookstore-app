@@ -2,7 +2,18 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Image, Text } from '@tarojs/components'
 import { AtIcon, AtDivider } from 'taro-ui'
+import { Book } from '../../components/common/common'
 import './index.less'
+
+interface BookDetailMessage {
+  key: string,
+  value: string,
+}
+interface State {
+  book: Book,
+  bookDetailMessageList: BookDetailMessage[],
+  hasBookInCart: boolean,
+}
 
 const arr = [
   {
@@ -19,14 +30,14 @@ const arr = [
   },
 ]
 
-export default class Index extends Component {
-  state = {
+export default class Index extends Component<any, State> {
+  readonly state: Readonly<State> = {
     book: Taro.getStorageSync('currentBook'),
     bookDetailMessageList: [],
     hasBookInCart: false,
   }
 
-  componentWillMount() {
+  componentDidMount(): void {
     const { book } = this.state;
     this.setState({
       bookDetailMessageList: [
@@ -60,25 +71,17 @@ export default class Index extends Component {
         userId: '1',
         ISBN: book.ISBN,
       }
-    }).then(res => {
+    }).then((res: any) => {
       this.setState({ hasBookInCart: res.result })
     })
   }
 
-  componentDidMount() { }
-
-  componentWillUnmount() { }
-
-  componentDidShow() { }
-
-  componentDidHide() { }
-
-  handleLinkToCartPage = () => {
+  handleLinkToCartPage = (): void => {
     Taro.switchTab({ url: '/pages/cart/index' })
   }
 
   // 防止用户在短时间内快速点击导致调用多次接口，需要做数据节流
-  handleAddToCart = () => {
+  handleAddToCart = (): () => void => {
     const { book, hasBookInCart } = this.state;
     let canClick = true;
 
@@ -111,7 +114,7 @@ export default class Index extends Component {
     };
   }
 
-  handleLinkToPurchasePage = () => {
+  handleLinkToPurchasePage = (): void => {
     const { book } = this.state;
     Taro.setStorageSync('settleList', [book]);
     Taro.navigateTo({ url: '/pages/purchase/index' })

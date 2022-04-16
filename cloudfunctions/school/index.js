@@ -7,7 +7,9 @@ const getHomepageInitialData = async (event) => {
   const db = cloud.database();
   const data = {
     schoolList: [],
-    currentSchoolData: {},
+    academyList: [],
+    majorList: [],
+    examList: [],
   }
 
   // 获取所有学校
@@ -24,14 +26,31 @@ const getHomepageInitialData = async (event) => {
       })
     })
 
-  // 获取选中的学校信息
-  await db.collection('school')
+  await db.collection('academy')
     .where({
       schoolName: event.schoolName
     })
     .get()
     .then(res => {
-      data.currentSchoolData = res.data[0];
+      data.academyList = res.data;
+    })
+
+  await db.collection('major')
+    .where({
+      schoolName: event.schoolName
+    })
+    .get()
+    .then(res => {
+      data.majorList = res.data;
+    })
+
+  await db.collection('exam')
+    .where({
+      schoolName: event.schoolName
+    })
+    .get()
+    .then(res => {
+      data.examList = res.data;
     })
 
   return data;
@@ -226,7 +245,9 @@ const getOrderList = async (event) => {
 
   //查询订单
   await db.collection('order')
-    .where({ open_id: event.open_id })
+    .where({
+      open_id: event.open_id
+    })
     .get()
     .then((res) => {
       orderData = res.data;
@@ -237,7 +258,9 @@ const getOrderList = async (event) => {
 
   //查询订单的书籍
   await db.collection('book')
-    .where({ _id: _.in(book_id) })
+    .where({
+      _id: _.in(book_id)
+    })
     .get()
     .then((res) => {
       bookData = res.data;
@@ -258,7 +281,7 @@ const getOrderList = async (event) => {
 }
 
 const login = async (event) => {
-  let rst=null;
+  let rst = null;
 
   let options = {
     uri: 'https://api.weixin.qq.com/sns/jscode2session',
@@ -277,7 +300,7 @@ const login = async (event) => {
   console.log(options)
 
   await rp(options).then((res) => {
-    rst=res.openid;
+    rst = res.openid;
   })
 
   return rst

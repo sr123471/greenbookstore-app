@@ -1,12 +1,20 @@
 import { Component } from 'react'
-import Taro, { useTabItemTap } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { View, Image, Text } from '@tarojs/components'
 import { AtIcon, AtInputNumber, AtButton } from 'taro-ui'
+import { Book } from '../../components/common/common'
 import './index.less'
+interface State {
+  showContent: boolean,
+  isManagement: boolean,
+  cartList: Book[],
+  selectAll: boolean,
+  selectItemNum: number,
+  totalPrice: number,
+}
+export default class Index extends Component<any, State> {
 
-export default class Index extends Component {
-
-  state = {
+  readonly state: Readonly<State> = {
     showContent: false,
     isManagement: true,
     cartList: [],
@@ -15,7 +23,7 @@ export default class Index extends Component {
     totalPrice: 0,
   };
 
-  componentWillMount() {
+  componentDidMount(): void {
     Taro.showLoading();
     Taro.cloud.callFunction({
       name: 'school',
@@ -23,8 +31,7 @@ export default class Index extends Component {
         action: 'getCartList',
         userId: '1',
       }
-    }).then(res => {
-      console.log(res)
+    }).then((res: any) => {
       this.setState({
         cartList: res.result?.cartList,
         showContent: true,
@@ -33,30 +40,22 @@ export default class Index extends Component {
     })
   }
 
-  componentDidMount() { }
-
-  componentWillUnmount() { }
-
-  componentDidShow() { }
-
-  componentDidHide() { }
-
-  handleLinkToHome = () => {
+  handleLinkToHome = (): void => {
     Taro.switchTab({ url: '/pages/home/index' })
   }
 
-  handleLinkToBookDetailPage = () => {
+  handleLinkToBookDetailPage = (): void => {
     Taro.navigateTo({ url: '/pages/bookDetail/index' })
   }
 
   // 管理购物车
-  handleManage = () => {
+  handleManage = (): void => {
     const { isManagement } = this.state
     this.setState({ isManagement: !isManagement })
   }
 
   // 计算合计价格
-  calculateTotalPrice(cartList) {
+  calculateTotalPrice(cartList: Book[]): number {
     // reduce从数组的第一项开始归并
     return cartList.reduce((previousValue, currentValue) => {
       return previousValue + (currentValue.isSelect ? currentValue.presentPrice : 0) * currentValue.selectQuantity;
@@ -64,7 +63,7 @@ export default class Index extends Component {
   }
 
   // 计算选中的商品数量
-  calculateSelectItemNum(cartList) {
+  calculateSelectItemNum(cartList: Book[]): number {
     const newCartList = cartList.map(item => (
       { ...item, isSelect: item.isSelect ? 1 : 0 }
     ));
@@ -73,16 +72,8 @@ export default class Index extends Component {
     }, 0);
   }
 
-  // // 选中的商品列表
-  // selectedBookList = (type) => {
-  //   const { cartList } = this.state;
-  //   if (type === 'delete') {
-
-  //   }
-  // }
-
   // 增加或减少商品购买数量
-  handleChange = (ISBN, value) => {
+  handleChange = (ISBN: string, value: number): void => {
     const { cartList } = this.state;
     const newCartList = cartList.map(item =>
       ({ ...item, selectQuantity: item.ISBN === ISBN ? value : item.selectQuantity })
@@ -97,7 +88,7 @@ export default class Index extends Component {
   }
 
   // 选择购物车中的商品,type为selectOne时是点击了一个商品，为selectAll时点击了全选按钮
-  handleSelectItem = (ISBN, type) => {
+  handleSelectItem = (ISBN: string, type: string): void => {
     const { cartList, selectAll } = this.state;
     const newCartList = cartList.map(item => (
       { ...item, isSelect: type === 'selectOne' ? (item.ISBN === ISBN ? !item.isSelect : item.isSelect) : !selectAll }
@@ -114,7 +105,7 @@ export default class Index extends Component {
   }
 
   // 结算或者删除购物车中商品
-  handleFinishOrDelete = () => {
+  handleFinishOrDelete = (): void => {
     const { cartList, isManagement, selectItemNum } = this.state;
     if (isManagement) {
       if (selectItemNum === 0) {

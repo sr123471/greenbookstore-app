@@ -2,6 +2,7 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { AtIcon, AtDrawer } from 'taro-ui'
+import { login } from '../../service/login'
 import './index.less'
 
 const bookTypeList = [
@@ -28,6 +29,32 @@ export default class Index extends Component {
     currentBookType: 1,
   }
 
+  async getUser() {
+    await login();
+    let rst = await this.isInfoComplete();
+
+    Taro.hideLoading();
+    if (!rst) {
+      Taro.reLaunch({
+        url: '../changeUserInfo/changeUserInfo'
+      })
+    }
+  }
+
+  isInfoComplete() {
+    return new Promise((resolve, reject) => {
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'isInfoComplete',
+          openid: Taro.getStorageSync('openid')
+        }
+      }).then(res => {
+        resolve(res.result)
+      })
+    })
+  }
+
   componentWillMount() {
     // 当前学校要根据用户信息来
     const currentSchool = Taro.getStorageSync('currentSchool');
@@ -48,7 +75,9 @@ export default class Index extends Component {
     })
   }
 
-  componentDidMount() { }
+  componentDidMount() {
+    this.getUser();
+  }
 
   componentWillUnmount() { }
 

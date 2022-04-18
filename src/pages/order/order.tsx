@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { getCurrentPages } from '@tarojs/taro'
 import { useReady } from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
+import { AtIcon } from 'taro-ui'
 import OrderCard from '../../components/orderCard/orderCard'
+import Taro from '@tarojs/taro'
 import './order.less'
 import { useEffect } from 'react'
 import { cloudCall, dataCreator } from '../../service/order'
@@ -24,6 +26,8 @@ export default function Order() {
 
   const [showMode, setShowMode] = useState('allorder')
   const [order, setOrder] = useState([]);
+  const [hasUnReceived, setHasUnReceived] = useState(false);
+  const [hasDone, setHasDone] = useState(false);
 
   useReady(() => {
     let pages = getCurrentPages()
@@ -35,10 +39,26 @@ export default function Order() {
   })
 
   useEffect(() => {
-    let data = dataCreator('getOrderList', '1', 'allorder')
-    cloudCall('school', data).then((res) => {
+    let data = dataCreator('getOrderList', Taro.getStorageSync('openid'), 'allorder')
+    cloudCall('school', data).then((res: any) => {
       setOrder(res.result);
       console.log(res.result);
+
+      let flag = 0;
+      for (let i = 0; i < res.result.length; i++) {
+        if (res.result[i].status === 'unReceived') {
+          setHasUnReceived(true);
+          flag++;
+        }
+        else if (res.result[i].status === 'done') {
+          setHasDone(true);
+          flag++;
+        }
+
+        if (flag === 2) {
+          break;
+        }
+      }
     })
   }, [])
 
@@ -57,6 +77,27 @@ export default function Order() {
       setShowMode('unReceived')
   }
 
+  const empty = () => {
+    return (
+      <View className='emptyCart'>
+        <AtIcon value='shopping-cart' size='80' color='#000'></AtIcon>
+        <View>暂无此类订单哦</View>
+      </View>
+    )
+  }
+
+  const showEmpty = () => {
+    if (!hasDone && showMode === 'done') {
+      return empty();
+    }
+    else if (!hasUnReceived && showMode === 'unReceived') {
+      return empty();
+    }
+    else if (order.length === 0) {
+      return empty();
+    }
+  }
+
   return (
     <View className='bg'>
       <View className='nav'>
@@ -64,14 +105,16 @@ export default function Order() {
         <Text onClick={toUnReceived} className={`nav1 ${showMode === 'unReceived' ? 'navSelected' : null}`}>待取货</Text>
         <Text onClick={toDone} className={`nav1 ${showMode === 'done' ? 'navSelected' : null}`}>已完成</Text>
       </View>
-      {order.map((item) => {
-        if (showMode === 'allorder')
-          return (<OrderCard order={item}></OrderCard>)
+      {!hasDone || !hasUnReceived ?
+        showEmpty() :
+        order.map((item) => {
+          if (showMode === 'allorder')
+            return (<OrderCard order={item}></OrderCard>)
 
-        else if (showMode === item.status) {
-          return (<OrderCard order={item}></OrderCard>)
-        }
-      })}
+          else if (showMode === item.status) {
+            return (<OrderCard order={item}></OrderCard>)
+          }
+        })}
     </View>
   )
 }

@@ -1,8 +1,10 @@
 .username {
   flex: 0 0 70%;
   text-align: left;
+  color: white;
   margin-left: 1em;
   font-size: 48px;
+  letter-spacing: 3px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
@@ -10,13 +12,13 @@
   padding: 0px;
   border-style: solid;
   width: 70%;
-  border-color: black;
+  border-color: white;
   border-width: 1px;
 }
 
 .school {
-  color: gray;
-  font-size: 32px;
+  color: white;
+  font-size: 20px;
 }
 
 .avatar {
@@ -34,8 +36,10 @@
   border-style: none;
   border-radius: 20px;
   padding: 50px 0;
-  background-image: linear-gradient(to bottom right, #fcffe6, #feffe6);
+  // background-image: linear-gradient(to bottom right, #fcffe6, #feffe6);
+  background-image: linear-gradient(to bottom right, #237804, #006d75);
   align-items: center;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 }
 
 
@@ -60,12 +64,12 @@
 // }
 
 .container1 {
-  padding-top: 20px;
   width: 100%;
   margin-top: 10px;
   border-radius: 20px;
   text-align: center;
   background-color: white;
+  box-shadow: 0 10px 50px 0px #135200;
 
   display: flex;
   justify-content: space-around;
@@ -74,7 +78,12 @@
 
   View {
     flex: 0 0 33.33%;
-    margin: 32px 0;
+    padding: 32px 0 16px 0;
+  }
+
+  View:active{
+    background-color: lightgray;
+    border-radius: 20px;
   }
 
 }
@@ -83,7 +92,9 @@
 .bg {
   overflow: hidden;
   // background-image: linear-gradient(to bottom right, #52c41a, rgb(62, 227, 189), #bae637);
-  background-image: url(https://labeler.oss-cn-hangzhou.aliyuncs.com/img/bg.png);
+  // background-image: url(https://labeler.oss-cn-hangzhou.aliyuncs.com/img/bg.png);
+  background-image: linear-gradient(to bottom right, #b7eb8f, #73d13d, #87e8de);
+ 
   width: 100vw;
   height: 100vh;
 }

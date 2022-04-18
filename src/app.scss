@@ -25,6 +25,7 @@ $color-brand: #C6100D;
 @import "~taro-ui/dist/style/components/steps.scss";
 @import "~taro-ui/dist/style/components/message.scss";
 @import "~taro-ui/dist/style/components/drawer.scss";
+@import "~taro-ui/dist/style/components/toast.scss";
 
 // 使用heightFix防止图片出现闪屏
 Image {

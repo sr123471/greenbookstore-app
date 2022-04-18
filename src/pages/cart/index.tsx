@@ -16,12 +16,15 @@ export default class Index extends Component {
   };
 
   componentWillMount() {
-    Taro.showLoading();
+    Taro.showLoading({
+      title: '小二处理中',
+      mask: true
+    });
     Taro.cloud.callFunction({
       name: 'school',
       data: {
         action: 'getCartList',
-        userId: '1',
+        userId: Taro.getStorageSync('openid'),
       }
     }).then(res => {
       console.log(res)
@@ -138,7 +141,10 @@ export default class Index extends Component {
         })
       } else {
         // 删除商品
-        Taro.showLoading();
+        Taro.showLoading({
+      title: '小二处理中',
+      mask: true
+    });
         const ISBNList = [];
         cartList.forEach(item => {
           if (item.isSelect === true) {
@@ -152,7 +158,7 @@ export default class Index extends Component {
           name: 'school',
           data: {
             action: 'deleteCart',
-            userId: '1',
+            userId: Taro.getStorageSync('openid'),
             ISBNList,
           }
         }).then(res => {

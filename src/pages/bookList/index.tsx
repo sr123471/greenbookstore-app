@@ -51,7 +51,11 @@ export default class Index extends Component<any, State> {
       title: getCurrentInstance().router.params.type // 接收路由的传参
     })
 
-    Taro.showLoading();
+    Taro.showLoading({
+      title: '小二处理中',
+      mask: true
+    });
+
     let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, activeSort);
     cloudCall('school', data).then((res: any) => {
       this.setState({
@@ -86,7 +90,11 @@ export default class Index extends Component<any, State> {
       if (activeSort === 'price') {
         let data = dataCreator('getBookList', currentSchool,
           currentBookType, offset, limit, activeSortOfPrice_asc === true ? 'asc' : 'desc');
-        Taro.showLoading();
+
+        Taro.showLoading({
+          title: '小二处理中',
+          mask: true
+        });
         cloudCall('school', data).then((res: any) => {
           this.setState({
             bookList: res.result.data,
@@ -97,7 +105,11 @@ export default class Index extends Component<any, State> {
         })
       } else {
         let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, 'synthesis');
-        Taro.showLoading();
+
+        Taro.showLoading({
+          title: '小二处理中',
+          mask: true
+        });
         cloudCall('school', data).then((res: any) => {
           this.setState({
             bookList: res.result.data,

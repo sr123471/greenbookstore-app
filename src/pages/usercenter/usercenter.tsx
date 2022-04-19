@@ -120,7 +120,7 @@ function UserCenter() {
         <Image className='avatar' src={user.avatarUrl} />
         <View className='username'>{user.nickName === null ? '暂未登陆' : user.nickName}
           <View className='line' />
-          <View className='school'>XXX大学</View>
+          {/* <View className='school'>XXX大学</View> */}
         </View>
       </View>
       <View className='container1'>

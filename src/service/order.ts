@@ -10,14 +10,18 @@ function cloudCall(name: string, data: object) {
 interface OrderData {
     action: string,
     open_id: string,
+    limit: number,
+    skip: number,
     status: string
 }
 
 
-function dataCreator(action: string, open_id: string, status: string): OrderData {
+function dataCreator(action: string, open_id: string, limit: number, skip: number, status: string): OrderData {
     return {
         action,
         open_id,
+        limit,
+        skip,
         status
     }
 }

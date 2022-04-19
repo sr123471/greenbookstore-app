@@ -16,6 +16,7 @@ export default {
     'pages/unreceived/unreceived',
     'pages/order/order',
     'pages/userinfo/userinfo',
+    'pages/changeUserInfo/changeUserInfo',
     // 'pages/index/index',
     'pages/advice/advice',
     'pages/sellbooks/sellbooks'

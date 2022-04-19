@@ -4,6 +4,7 @@ import { View } from '@tarojs/components'
 import { AtIcon, AtDrawer } from 'taro-ui'
 import { cloudCall, dataCreator } from '../../service/home'
 import { Academy, Major, Exam } from '../../components/common/common'
+import { login } from '../../service/login'
 import './index.less'
 
 interface State {
@@ -44,6 +45,7 @@ export default class Index extends Component<any, State> {
   }
 
   componentDidMount(): void {
+    this.getUser();
     // 当前学校要根据用户信息来
     const currentSchool = Taro.getStorageSync('currentSchool');
     this.setState({ currentSchool })
@@ -56,6 +58,32 @@ export default class Index extends Component<any, State> {
         academyList: res.result.academyList,
         majorList: res.result.majorList,
         examList: res.result.examList,
+      })
+    })
+  }
+
+  async getUser() {
+    await login();
+    let rst = await this.isInfoComplete();
+
+    Taro.hideLoading();
+    if (!rst) {
+      Taro.reLaunch({
+        url: '../changeUserInfo/changeUserInfo'
+      })
+    }
+  }
+
+  isInfoComplete() {
+    return new Promise((resolve, reject) => {
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'isInfoComplete',
+          openid: Taro.getStorageSync('openid')
+        }
+      }).then(res => {
+        resolve(res.result)
       })
     })
   }

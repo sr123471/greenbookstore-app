@@ -11,7 +11,15 @@ function OrderCard(props) {
 
   function detail() {
     console.log(this)
-    // Taro.navigateTo({ url: '../orderdetail/orderdetail' })
+    Taro.navigateTo({
+      url: '../orderdetail/orderdetail',
+      success: function (res) {
+        // 通过eventChannel向被打开页面传送数据
+        res.eventChannel.emit('toDetail', order)
+      }
+    }).then(() => {
+      console.log("OK！")
+    })
   }
 
   return (
@@ -43,6 +51,9 @@ interface OrderInfo {
   imgURL: string;
   price: number;
   status: string;
+  _id: string;
+  createTime: Date;
+  receiveTime: Date;
 }
 
 interface OrderShow {
@@ -51,6 +62,9 @@ interface OrderShow {
   priceInt: string;
   priceDecimal: string;
   status: string;
+  _id: string;
+  createTime: Date;
+  receiveTime: Date;
 }
 
 function useOrder(props: OrderInfo): OrderShow {
@@ -66,7 +80,11 @@ function useOrder(props: OrderInfo): OrderShow {
 
   const [status, setStatus] = useState(props.status);
 
-  return { bookName, imgURL, priceInt, priceDecimal, status };
+  const [_id, set_id] = useState(props._id);
+  const [createTime, setCreateTime] = useState(props.createTime);
+  const [receiveTime, setReceiveTime] = useState(props.receiveTime);
+
+  return { bookName, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime };
 }
 
 export default OrderCard

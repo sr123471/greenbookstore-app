@@ -1,7 +1,5 @@
 const cloud = require('wx-server-sdk');
 const rp = require('request-promise');
-const { isValidElement } = require('react');
-const { result } = require('lodash');
 cloud.init()
 
 // 初始化首页信息，将获取学校、学院、专业、考试书籍种类写在一起
@@ -216,8 +214,35 @@ const deleteCart = async (event) => {
     })
 }
 
+// 获取订单数目
+const getOrderCounts = async (event) => {
+  const db = cloud.database();
+  const _ = db.command;
 
-//获取订单信息
+  if (event.status === 'allorder') {
+    let count = await db.collection('order')
+      .where({
+        open_id: event.open_id,
+      })
+      .count();
+    console.log(count)
+    return count;
+  }
+
+  else {
+    let count = await db.collection('order')
+      .where({
+        open_id: event.open_id,
+        status: event.status
+      })
+      .count();
+    console.log(count)
+    return count;
+  }
+
+}
+
+// 获取订单信息
 const getOrderList = async (event) => {
   const db = cloud.database();
   const _ = db.command;
@@ -227,15 +252,38 @@ const getOrderList = async (event) => {
   let bookData = [];
 
   //查询订单
-  await db.collection('order')
-    .where({ open_id: event.open_id })
-    .get()
-    .then((res) => {
-      orderData = res.data;
-      orderData.forEach((item) => {
-        book_id.push(item.book_id);
+
+  if (event.status === 'allorder') {
+    await db.collection('order')
+      .where({ open_id: event.open_id })
+      .limit(event.limit)
+      .skip(event.skip)
+      .get()
+      .then((res) => {
+        orderData = res.data;
+        orderData.forEach((item) => {
+          book_id.push(item.book_id);
+        })
       })
-    })
+  }
+
+  else {
+    console.log(1)
+    await db.collection('order')
+      .where({
+        open_id: event.open_id,
+        status: event.status
+      })
+      .limit(event.limit)
+      .skip(event.skip)
+      .get()
+      .then((res) => {
+        orderData = res.data;
+        orderData.forEach((item) => {
+          book_id.push(item.book_id);
+        })
+      })
+  }
 
   //查询订单的书籍
   await db.collection('book')
@@ -481,6 +529,9 @@ exports.main = async (event, context) => {
     }
     case 'getMajor': {
       return getMajor(event)
+    }
+    case 'getOrderCounts': {
+      return getOrderCounts(event)
     }
     default: {
       return '云函数调用失败'

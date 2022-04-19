@@ -1,34 +1,46 @@
 import Taro from '@tarojs/taro'
+import { useState } from 'react'
+import { useReady, getCurrentPages } from '@tarojs/taro'
 import { AtListItem, AtList } from "taro-ui"
 import { View, Image, Text } from '@tarojs/components'
 import './orderdetail.less'
 
-export default function OrderDetail(props){
+export default function OrderDetail() {
+  const [order, setOrder] = useState(Object)
 
-    return (
-      <View className='bg'>
-        <View className='card'>
-          <Image
-            className='bookpic'
-            src='https://img.pddpic.com/mms-material-img/2021-06-15/016e1bf5-2f24-4250-8a07-eaa413810c24.jpeg.a.jpeg'
-          />
-          <View className='bookinfo'>
-            <View className='booktitle'>
-              马克思主义基本原理概论
-            </View>
-            <View className='price'>
-              <Text className='priceint'>¥10.</Text>
-              <Text className='pricedecimal'>50</Text>
-            </View>
+  useReady(() => {
+    let pages = getCurrentPages()
+    const current = pages[pages.length - 1]
+    const eventChannel = current.getOpenerEventChannel()
+    eventChannel.on('toDetail', function (data) {
+      setOrder(data)
+    })
+  })
+
+  return (
+    <View className='bg'>
+      <View className='card'>
+        <Image
+          className='bookpic'
+          src={order.imgURL}
+        />
+        <View className='bookinfo'>
+          <View className='booktitle'>
+            {order.bookName}
           </View>
-
-          <AtList className='list'>
-            <AtListItem title='订单编号' note='123123123123123123123' />
-            <AtListItem title='付款时间' note='2022-01-01 19:19:19' />
-            <AtListItem title='成交时间' note='2022-01-01 19:19:19' />
-          </AtList>
-
+          <View className='price'>
+            <Text className='priceint'>¥{order.priceInt}</Text>
+            <Text className='pricedecimal'>.{order.priceDecimal}</Text>
+          </View>
         </View>
+
+        <AtList className='list'>
+          <AtListItem title='订单编号' note={order._id} />
+          <AtListItem title='付款时间' note={order.createTime} />
+          <AtListItem title='成交时间' note={order.receiveTime} />
+        </AtList>
+
       </View>
-    )
+    </View>
+  )
 }

@@ -23,15 +23,15 @@ export default class Index extends Component<any, any> {
     }
 
     cloudCall('school', data)
-      .then((res) => {
+      .then((res: any) => {
         let rst = res.result;
         console.log(rst);
         this.setState({
-          name:rst.name,
-          school:rst.school,
-          academy:rst.academy,
-          major:rst.major,
-          phone:rst.phone,
+          name: rst.name,
+          school: rst.school,
+          academy: rst.academy,
+          major: rst.major,
+          phone: rst.phone,
         })
       })
   }

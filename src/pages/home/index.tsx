@@ -65,6 +65,7 @@ export default class Index extends Component<any, State> {
   async getUser() {
     await login();
     let rst = await this.isInfoComplete();
+    console.log(rst)
 
     Taro.hideLoading();
     if (!rst) {
@@ -155,7 +156,7 @@ export default class Index extends Component<any, State> {
         <View className='container'>
           <View className='sidebar'>
             {
-              bookTypeList.map(item =>
+              bookTypeList?.map(item =>
                 <View
                   className={item.id === currentBookType ? 'bookTypeItemActive' : 'bookTypeItem'}
                   key={item.id}
@@ -177,7 +178,7 @@ export default class Index extends Component<any, State> {
             {/* 专业课书籍 */}
             {
               currentBookType === 2 &&
-              academyList.map(item =>
+              academyList?.map(item =>
                 <View className='academyItem' key={item._id}>
                   <View className='academyName' key={item._id}>{item.academyName}</View>
                   <View className='majorList'>
@@ -196,7 +197,7 @@ export default class Index extends Component<any, State> {
               currentBookType === 3 &&
               <View className='examList'>
                 {
-                  examList.map(item =>
+                  examList?.map(item =>
                     <View className='examItem' key={item._id} onClick={this.handleLinkToBookListPage.bind(this, 'examBook', '', item.examName)}>
                       <AtIcon prefixClass='icon' value='shijuan' size='45'></AtIcon>
                       <View>{item.examName}</View>

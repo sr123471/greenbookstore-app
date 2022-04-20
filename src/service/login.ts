@@ -24,7 +24,7 @@ const login = () => {
                                         Taro.showLoading({
                                             title: '小二处理中',
                                             mask: true,
-                                          });
+                                        });
                                         // session_key 已经失效，需要重新执行登录流程
                                         Taro.login({
                                             success: function (res) {

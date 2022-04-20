@@ -4,7 +4,6 @@ import { View, Image } from '@tarojs/components'
 import { login, getUserFlag } from '../../service/login'
 import './usercenter.less'
 
-
 function UserCenter() {
 
   let data = {

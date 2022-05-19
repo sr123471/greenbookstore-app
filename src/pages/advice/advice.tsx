@@ -41,6 +41,18 @@ export default class Index extends Component<any, any> {
         'type': 'success',
       })
 
+      let data = {
+        action: 'addAdvice',
+        openid: Taro.getStorageSync('openid'),
+        brief: this.state.brief,
+        detail: this.state.detail
+      }
+
+      Taro.cloud.callFunction({
+        name: 'school',
+        data
+      })
+
       this.setState({
         brief: '',
         detail: ''

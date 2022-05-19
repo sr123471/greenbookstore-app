@@ -13,6 +13,33 @@ export default function OrderDetail() {
     const current = pages[pages.length - 1]
     const eventChannel = current.getOpenerEventChannel()
     eventChannel.on('toDetail', function (data) {
+      let receiveTime = new Date(data.receiveTime)
+      let createTime = new Date(data.createTime)
+
+      let year = receiveTime.getFullYear()
+      let month = receiveTime.getMonth() + 1
+      let day = receiveTime.getDate()
+      let h = receiveTime.getHours()
+      let m = receiveTime.getMinutes()
+      let s = receiveTime.getSeconds()
+
+      data.receiveTime = `${year}-${month}-${day} ${h}:${m}:${s}`
+      if (s === 0) {
+        data.receiveTime += '0';
+      }
+
+      year = createTime.getFullYear()
+      month = createTime.getMonth() + 1
+      day = createTime.getDate()
+      h = createTime.getHours()
+      m = createTime.getMinutes()
+      s = createTime.getSeconds()
+
+      data.createTime = `${year}-${month}-${day} ${h}:${m}:${s}`
+      if (s === 0) {
+        data.createTime += '0';
+      }
+
       setOrder(data)
     })
   })

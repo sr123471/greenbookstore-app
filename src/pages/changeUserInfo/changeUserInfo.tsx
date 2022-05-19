@@ -132,6 +132,15 @@ export default function changeUserInfo() {
   }
 
   function submit() {
+    Taro.setStorageSync('userInfo', {
+      userName: name,
+      userSchool: school,
+      userAcademy: academy,
+      userMajor: major,
+      userPhone: phone,
+      openid: Taro.getStorageSync('openid'),
+    })
+
     Taro.showLoading({
       title: '小二处理中',
       mask: true

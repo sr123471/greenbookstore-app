@@ -30,7 +30,7 @@ interface State {
 export default class Index extends Component<any, State> {
 
   readonly state: Readonly<State> = {
-    currentSchool: Taro.getStorageSync('currentSchool'),
+    currentSchool: Taro.getStorageSync('userInfo').userSchool,
     currentBookType: Taro.getStorageSync('currentBookType'),
     searchValue: '',
     activeSort: 'synthesis',
@@ -133,7 +133,7 @@ export default class Index extends Component<any, State> {
         name: 'school',
         data: {
           action: 'hasBookInCart',
-          userId: '1',
+          userId: Taro.getStorageSync('openid'),
           ISBN: item.ISBN,
         }
       }).then(res => {
@@ -146,7 +146,7 @@ export default class Index extends Component<any, State> {
             name: 'school',
             data: {
               action: 'addCart',
-              userId: '1',
+              userId: Taro.getStorageSync('openid'),
               book: item,
             }
           }).then(res => {

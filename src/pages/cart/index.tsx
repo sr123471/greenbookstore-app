@@ -23,7 +23,8 @@ export default class Index extends Component<any, State> {
     totalPrice: 0,
   };
 
-  componentDidMount(): void {
+  // 每次点击购物车都要重新加载一遍页面，防止用户刚刚添加进购物车的商品看不到
+  componentDidShow() {
     Taro.showLoading({
       title: '小二处理中',
       mask: true
@@ -38,6 +39,7 @@ export default class Index extends Component<any, State> {
       this.setState({
         cartList: res.result?.cartList,
         showContent: true,
+        selectAll: res.result.cartList.every(item => item.isSelect === true)
       })
       Taro.hideLoading();
     })
@@ -93,6 +95,30 @@ export default class Index extends Component<any, State> {
   // 选择购物车中的商品,type为selectOne时是点击了一个商品，为selectAll时点击了全选按钮
   handleSelectItem = (ISBN: string, type: string): void => {
     const { cartList, selectAll } = this.state;
+
+    // 云开发不能将Boolean字段值直接取反，所以得前端传值到后端，后端不能直接取反
+    if (type === 'selectOne') {
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'selectOneItem',
+          openid: Taro.getStorageSync('openid'),
+          ISBN,
+          isSelect: !cartList.find(item => item.ISBN === ISBN)?.isSelect,
+        }
+      })
+    } else {
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'selectAllItem',
+          openid: Taro.getStorageSync('openid'),
+          isSelect: !selectAll,
+        }
+      })
+    }
+
+    // 同步更新state
     const newCartList = cartList.map(item => (
       { ...item, isSelect: type === 'selectOne' ? (item.ISBN === ISBN ? !item.isSelect : item.isSelect) : !selectAll }
     ));

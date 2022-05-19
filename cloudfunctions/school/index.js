@@ -216,6 +216,37 @@ const addCart = async (event) => {
     })
 }
 
+// 将购物车中的一个商品标记为选中或未选中
+const selectOneItem = async (event) => {
+  const db = cloud.database();
+  const _ = db.command;
+  await db.collection('user')
+    .where({
+      open_id: event.openid,
+      'cartList.ISBN': event.ISBN,
+    })
+    .update({
+      data: {
+        'cartList.$.isSelect': event.isSelect,
+      }
+    })
+}
+
+// 将购物车中的所以商品标记为选中或未选中
+const selectAllItem = async (event) => {
+  const db = cloud.database();
+  const _ = db.command;
+  await db.collection('user')
+    .where({
+      open_id: event.openid,
+    })
+    .update({
+      data: {
+        'cartList.$[].isSelect': event.isSelect,
+      }
+    })
+}
+
 // 删除购物车中的一个或几个商品
 const deleteCart = async (event) => {
   const db = cloud.database();
@@ -561,6 +592,12 @@ exports.main = async (event, context) => {
     }
     case 'addCart': {
       return addCart(event)
+    }
+    case 'selectOneItem': {
+      return selectOneItem(event)
+    }
+    case 'selectAllItem': {
+      return selectAllItem(event)
     }
     case 'deleteCart': {
       return deleteCart(event)

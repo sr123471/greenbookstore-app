@@ -68,7 +68,7 @@ export default class Index extends Component<any, State> {
       name: 'school',
       data: {
         action: 'hasBookInCart',
-        userId: '1',
+        userId: Taro.getStorageSync('openid'),
         ISBN: book.ISBN,
       }
     }).then((res: any) => {
@@ -93,7 +93,7 @@ export default class Index extends Component<any, State> {
           name: 'school',
           data: {
             action: 'addCart',
-            userId: '1',
+            userId: Taro.getStorageSync('openid'),
             book,
           }
         }).then(res => {

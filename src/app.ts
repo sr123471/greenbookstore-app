@@ -10,11 +10,9 @@ class App extends Component {
     Taro.cloud.init({
       env: 'cloud1-0g9mnrv48dfc20a1'
     })
-    // 之后要改，应该根据用户信息中的学校来设置
-    Taro.setStorageSync('currentSchool', '浙江外国语学院');
   }
 
-  componentDidShow() { 
+  componentDidShow() {
   }
 
   componentDidHide() { }

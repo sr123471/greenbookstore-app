@@ -40,32 +40,43 @@ export default class Index extends Component<any, State> {
     academyList: [],
     majorList: [],
     examList: [],
-    currentSchool: '',
+    currentSchool: Taro.getStorageSync('userInfo').userSchool,
     currentBookType: 1,
   }
 
   componentDidMount(): void {
     this.getUser();
-    // 当前学校要根据用户信息来
-    const currentSchool = Taro.getStorageSync('currentSchool');
-    this.setState({ currentSchool })
 
-    // 初始化首页信息，包括学校列表和当前选中的学校信息
-    let data = dataCreator('getHomepageInitialData', currentSchool);
-    cloudCall('school', data).then((res: any) => {
-      this.setState({
-        schoolList: res.result.schoolList,
-        academyList: res.result.academyList,
-        majorList: res.result.majorList,
-        examList: res.result.examList,
-      })
-    })
+    const { userSchool, userAcademy } = Taro.getStorageSync('userInfo');
+    if (userSchool !== undefined) {
+      // 初始化首页信息，包括学校列表和当前选中的学校信息
+      let data = dataCreator('getHomepageInitialData', userSchool);
+      cloudCall('school', data).then((res: any) => {
+        // 浏览首页的专业课书籍模块时，将当前用户的学院显示在最上面
+        const academyList = res.result.academyList;
+        let obj = {};
+        academyList.forEach((item, index) => {
+          if (item.academyName === userAcademy) {
+            obj = item;
+            academyList.splice(index, 1)
+            return;
+          }
+        });
+        academyList.unshift(obj);
+
+        this.setState({
+          schoolList: res.result.schoolList,
+          academyList: res.result.academyList,
+          majorList: res.result.majorList,
+          examList: res.result.examList,
+        });
+      });
+    }
   }
 
   async getUser() {
-    await login();
+    const a = await login();
     let rst = await this.isInfoComplete();
-    console.log(rst)
 
     Taro.hideLoading();
     if (!rst) {
@@ -102,14 +113,29 @@ export default class Index extends Component<any, State> {
   // 选择抽屉中的学校
   handleItemClick = (index: number): void => {
     const { schoolList, currentSchool } = this.state;
+    const { userSchool, userAcademy } = Taro.getStorageSync('userInfo');
+
     if (schoolList[index] !== currentSchool) {
-      Taro.setStorageSync('currentSchool', schoolList[index]);
       this.setState({ currentSchool: schoolList[index] })
       // 更新学校时，重新请求当前选中的学校信息
       let data = dataCreator('getHomepageInitialData', schoolList[index]);
       cloudCall('school', data).then((res: any) => {
+        const academyList = res.result.academyList;
+        let obj = {};
+        // 切换学校时，当切换的学校是用户所在的学校时才将用户的学院显示在最上面
+        if (schoolList[index] === userSchool) {
+          academyList.forEach((item, index) => {
+            if (item.academyName === userAcademy) {
+              obj = item;
+              academyList.splice(index, 1)
+              return;
+            }
+          });
+          academyList.unshift(obj);
+        }
+
         this.setState({
-          academyList: res.result.academyList,
+          academyList,
           majorList: res.result.majorList,
           examList: res.result.examList,
         })

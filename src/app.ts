@@ -8,12 +8,11 @@ class App extends Component {
 
   componentDidMount() {
     Taro.cloud.init({
-      env: 'cloud1-0g9mnrv48dfc20a1'
+      env: 'release-2gu9vjw481860c6a'
     })
   }
 
-  componentDidShow() {
-  }
+  componentDidShow() { }
 
   componentDidHide() { }
 

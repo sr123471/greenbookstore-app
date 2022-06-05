@@ -9,7 +9,7 @@ interface State {
   //当前学校
   currentSchool: string;
   //当前书籍列表展示界面展示的书籍类型
-  currentBookType: 'publicBook' | 'majorBook' | 'examBook';
+  currentBookType: 'publicBook' | 'majorBook' | 'examBook' | 'novelBook';
   //搜索框内容
   searchValue: string;
   //排序方式，默认按综合synthesis排序
@@ -38,7 +38,7 @@ export default class Index extends Component<any, State> {
     activeSortOfPrice_desc: false,
     bookList: [],
     offset: 0,
-    limit: 4,
+    limit: 10,
     total: 0,
     isActivityIndicatorOpened: false,
   }

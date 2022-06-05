@@ -1,6 +1,8 @@
 const cloud = require('wx-server-sdk');
 const rp = require('request-promise');
-cloud.init()
+cloud.init({
+  env: 'release-2gu9vjw481860c6a'
+})
 
 // 初始化首页信息，将获取学校、学院、专业、考试书籍种类写在一起
 const getHomepageInitialData = async (event) => {
@@ -58,6 +60,7 @@ const getHomepageInitialData = async (event) => {
 
 // 书籍列表展示，根据用户选择的是公共课、专业课或考试书籍来展示，分页展示
 const getBookList = async (event) => {
+  console.log(event)
   const db = cloud.database();
   const _ = db.command;
   let data = {};
@@ -66,7 +69,7 @@ const getBookList = async (event) => {
   let matchObj = {
     schoolName: event.schoolName,
   };
-  if (event.bookType === 'publicBook') {
+  if (event.bookType === 'publicBook' || event.bookType === 'novelBook') {
     matchObj = {
       ...matchObj,
       bookType: event.bookType,
@@ -161,7 +164,6 @@ const searchBook = async (event) => {
     .limit(10)
     .get()
     .then(res => {
-      console.log(res)
       data = res.data;
     })
   return data;
@@ -364,8 +366,8 @@ const login = async (event) => {
   let options = {
     uri: 'https://api.weixin.qq.com/sns/jscode2session',
     qs: {
-      appid: 'wxaf440938f8a30993',
-      secret: 'b5e31f08f66706ed9c624a0bea95ca07',
+      appid: 'wx783aabee796d33ba',
+      secret: '1ef46c330665567705e32a755b1616cb',
       js_code: event.code,
       grant_type: 'authorization_code'
     },
@@ -417,16 +419,16 @@ const isInfoComplete = async (event) => {
     })
     .get()
     .then((res) => {
-      console.log(res)
       if (res.data.length === 0) {
         // 插入新用户
         addUser(event.openid);
-        return false;
+        return {
+          isInfoComplete: false
+        };
       } else {
-        if (isValid(res.data[0])) {
-          return true;
-        } else {
-          return false;
+        return {
+          isInfoComplete: isValid(res.data[0]),
+          userInfo: res.data[0]
         }
       }
     })

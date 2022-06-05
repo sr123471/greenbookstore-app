@@ -30,7 +30,6 @@ const login = () => {
                                             data
                                         }).then(res => {
                                             Taro.setStorageSync('openid', res.result);
-                                            Taro.hideLoading();
                                             resolve(true)
                                         })
                                     } else {

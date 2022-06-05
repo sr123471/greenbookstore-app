@@ -30,6 +30,10 @@ const bookTypeList = [
     id: 3,
     title: '考试书籍',
   },
+  {
+    id: 4,
+    title: '小说书籍',
+  },
 ]
 
 export default class Index extends Component<any, State> {
@@ -44,11 +48,14 @@ export default class Index extends Component<any, State> {
     currentBookType: 1,
   }
 
-  componentDidMount(): void {
-    this.getUser();
+  async componentDidMount() {
+    await this.getUser();
 
     const { userSchool, userAcademy } = Taro.getStorageSync('userInfo');
     if (userSchool !== undefined) {
+      this.setState({
+        currentSchool: userSchool,
+      })
       // 初始化首页信息，包括学校列表和当前选中的学校信息
       let data = dataCreator('getHomepageInitialData', userSchool);
       cloudCall('school', data).then((res: any) => {
@@ -69,6 +76,8 @@ export default class Index extends Component<any, State> {
           academyList: res.result.academyList,
           majorList: res.result.majorList,
           examList: res.result.examList,
+        }, () => {
+          Taro.hideLoading();
         });
       });
     }
@@ -94,8 +103,18 @@ export default class Index extends Component<any, State> {
           action: 'isInfoComplete',
           openid: Taro.getStorageSync('openid')
         }
-      }).then(res => {
-        resolve(res.result)
+      }).then((res: any) => {
+        // 如果用戶的所有信息都是完整的，就存到storage中
+        if (res.result.isInfoComplete) {
+          Taro.setStorageSync('userInfo', {
+            userName: res.result.userInfo.name,
+            userSchool: res.result.userInfo.school,
+            userAcademy: res.result.userInfo.academy,
+            userMajor: res.result.userInfo.major,
+            userPhone: res.result.userInfo.phone,
+          })
+        }
+        resolve(res.result.isInfoComplete)
       })
     })
   }
@@ -143,7 +162,7 @@ export default class Index extends Component<any, State> {
     }
   }
 
-  // 选择公共课书籍or专业课书籍or考试书籍
+  // 选择公共课书籍or专业课书籍or考试书籍or小说书籍
   handleChangeBookType = (id: number): void => {
     this.setState({ currentBookType: id })
   }
@@ -196,9 +215,9 @@ export default class Index extends Component<any, State> {
             {/* 公共课书籍 */}
             {
               currentBookType === 1 &&
-              <View className='publishBookArea' onClick={this.handleLinkToBookListPage.bind(this, 'publicBook', '', '公共课书籍')}>
+              <View className='bookArea' onClick={this.handleLinkToBookListPage.bind(this, 'publicBook', '', '公共课书籍')}>
                 <AtIcon prefixClass='icon' value='shujijiaocai-copy' size='50'></AtIcon>
-                <View className='publishBookText'>公共课书籍</View>
+                <View className='bookText'>公共课书籍</View>
               </View>
             }
             {/* 专业课书籍 */}
@@ -230,6 +249,14 @@ export default class Index extends Component<any, State> {
                     </View>
                   )
                 }
+              </View>
+            }
+            {/* 小说书籍 */}
+            {
+              currentBookType === 4 &&
+              <View className='bookArea' onClick={this.handleLinkToBookListPage.bind(this, 'novelBook', '', '小说书籍')}>
+                <AtIcon prefixClass='icon' value='shujijiaocai-copy' size='50'></AtIcon>
+                <View className='bookText'>小说书籍</View>
               </View>
             }
           </View>

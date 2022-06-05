@@ -45,7 +45,7 @@ export interface Book {
     //用于购物车，记录用户选择商品的数量，初始为1
     selectQuantity: number;
     //书本类型
-    bookType: 'publicBook' | 'majorBook' | 'examBook';
+    bookType: 'publicBook' | 'majorBook' | 'examBook' | 'novelBook';
     //书本所属的学校
     schoolName: string;
     //如果书本是专业课书籍，书本所属的学院

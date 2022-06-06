@@ -44,43 +44,24 @@ export default class Index extends Component<any, State> {
     academyList: [],
     majorList: [],
     examList: [],
-    currentSchool: Taro.getStorageSync('userInfo').userSchool,
+    currentSchool: '浙江外国语学院',
     currentBookType: 1,
   }
 
   async componentDidMount() {
     await this.getUser();
 
-    const { userSchool, userAcademy } = Taro.getStorageSync('userInfo');
-    if (userSchool !== undefined) {
+    // 初始化首页信息，包括学校列表和当前选中的学校信息
+    let data = dataCreator('getHomepageInitialData', '浙江外国语学院');
+    cloudCall('school', data).then((res: any) => {
       this.setState({
-        currentSchool: userSchool,
-      })
-      // 初始化首页信息，包括学校列表和当前选中的学校信息
-      let data = dataCreator('getHomepageInitialData', userSchool);
-      cloudCall('school', data).then((res: any) => {
-        // 浏览首页的专业课书籍模块时，将当前用户的学院显示在最上面
-        const academyList = res.result.academyList;
-        let obj = {};
-        academyList.forEach((item, index) => {
-          if (item.academyName === userAcademy) {
-            obj = item;
-            academyList.splice(index, 1)
-            return;
-          }
-        });
-        academyList.unshift(obj);
-
-        this.setState({
-          schoolList: res.result.schoolList,
-          academyList: res.result.academyList,
-          majorList: res.result.majorList,
-          examList: res.result.examList,
-        }, () => {
-          Taro.hideLoading();
-        });
+        schoolList: res.result.schoolList,
+        academyList: res.result.academyList,
+        majorList: res.result.majorList,
+        examList: res.result.examList,
       });
-    }
+      Taro.hideLoading();
+    });
   }
 
   async getUser() {
@@ -108,10 +89,8 @@ export default class Index extends Component<any, State> {
         if (res.result.isInfoComplete) {
           Taro.setStorageSync('userInfo', {
             userName: res.result.userInfo.name,
-            userSchool: res.result.userInfo.school,
-            userAcademy: res.result.userInfo.academy,
-            userMajor: res.result.userInfo.major,
             userPhone: res.result.userInfo.phone,
+            openid: Taro.getStorageSync('openid'),
           })
         }
         resolve(res.result.isInfoComplete)

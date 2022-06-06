@@ -12,7 +12,10 @@ function UserCenter() {
   }
 
   if (getUserFlag()) {
-    data = Taro.getStorageSync('user')
+    data = {
+      nickName: Taro.getStorageSync('userInfo').userName,
+      avatarUrl: Taro.getStorageSync('user').avatarUrl
+    }
   }
 
   const [user, setUser] = useState(data);

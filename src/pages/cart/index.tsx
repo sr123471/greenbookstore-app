@@ -26,7 +26,7 @@ export default class Index extends Component<any, State> {
   // 每次点击购物车都要重新加载一遍页面，防止用户刚刚添加进购物车的商品看不到
   componentDidShow() {
     Taro.showLoading({
-      title: '小二处理中',
+      title: '加载中',
       mask: true
     });
     Taro.cloud.callFunction({
@@ -159,7 +159,7 @@ export default class Index extends Component<any, State> {
       } else {
         // 删除商品
         Taro.showLoading({
-          title: '小二处理中',
+          title: '处理中',
           mask: true
         });
         const ISBNList = [];

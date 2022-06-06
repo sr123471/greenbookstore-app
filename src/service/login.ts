@@ -12,7 +12,7 @@ const login = () => {
                         desc: '申请获取基本信息',
                         success: (res) => {
                             Taro.showLoading({
-                                title: '小二处理中',
+                                title: '处理中',
                                 mask: true,
                             });
                             Taro.login({

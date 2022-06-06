@@ -52,7 +52,7 @@ export default class Index extends Component<any, State> {
     })
 
     Taro.showLoading({
-      title: '小二处理中',
+      title: '加载中',
       mask: true
     });
 
@@ -92,7 +92,7 @@ export default class Index extends Component<any, State> {
           currentBookType, offset, limit, activeSortOfPrice_asc === true ? 'asc' : 'desc');
 
         Taro.showLoading({
-          title: '小二处理中',
+          title: '加载中',
           mask: true
         });
         cloudCall('school', data).then((res: any) => {
@@ -107,7 +107,7 @@ export default class Index extends Component<any, State> {
         let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, 'synthesis');
 
         Taro.showLoading({
-          title: '小二处理中',
+          title: '加载中',
           mask: true
         });
         cloudCall('school', data).then((res: any) => {

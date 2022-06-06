@@ -397,9 +397,6 @@ const setUserInfo = async (event) => {
     .update({
       data: {
         name: event.name,
-        school: event.school,
-        major: event.major,
-        academy: event.academy,
         phone: event.phone
       }
     })
@@ -438,7 +435,7 @@ const isInfoComplete = async (event) => {
 
 // 校验data是否含有完整的个人信息
 function isValid(data) {
-  let keys = ['major', 'school', 'academy', 'phone', 'name'];
+  let keys = ['phone', 'name'];
   for (let i = 0; i < keys.length; i++) {
     if (data[keys[i]] === undefined || data[keys[i]] === '') {
       return false;
@@ -455,12 +452,9 @@ const addUser = async (openid) => {
     .add({
       data: {
         open_id: openid,
-        academy: '',
-        major: '',
         cartList: [],
         name: '',
         phone: '',
-        school: ''
       }
     })
 }
@@ -477,63 +471,6 @@ const getUserInfo = async (event) => {
       return res.data[0];
     })
   return rst;
-}
-
-// 获取学校选择栏
-const getSchool = async () => {
-  const db = cloud.database();
-  let schoolList = await db.collection('school')
-    .get()
-    .then((res) => {
-      let temp = res.data;
-      let rst = [];
-      temp.forEach((val) => {
-        rst.push(val.schoolName);
-      })
-      return rst;
-    })
-  return schoolList;
-}
-
-// 获取学院选择栏
-const getAcademy = async (event) => {
-  const db = cloud.database();
-  let academyList = await db.collection('academy')
-    .where({
-      schoolName: event.schoolName
-    })
-    .get()
-    .then((res) => {
-      console.log(res)
-      let temp = res.data;
-      let rst = [];
-      temp.forEach((val) => {
-        rst.push(val.academyName);
-      })
-      return rst;
-    })
-  return academyList;
-}
-
-// 获取专业选择栏
-const getMajor = async (event) => {
-  const db = cloud.database();
-  let majorList = await db.collection('major')
-    .where({
-      schoolName: event.schoolName,
-      academyName: event.academyName
-    })
-    .get()
-    .then((res) => {
-      console.log(res)
-      let temp = res.data;
-      let rst = [];
-      temp.forEach((val) => {
-        rst.push(val.majorName);
-      })
-      return rst;
-    })
-  return majorList;
 }
 
 const addAdvice = async (event) => {
@@ -615,15 +552,6 @@ exports.main = async (event, context) => {
     }
     case 'getUserInfo': {
       return getUserInfo(event)
-    }
-    case 'getSchool': {
-      return getSchool()
-    }
-    case 'getAcademy': {
-      return getAcademy(event)
-    }
-    case 'getMajor': {
-      return getMajor(event)
     }
     case 'getOrderCounts': {
       return getOrderCounts(event)

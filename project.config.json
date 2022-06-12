@@ -3,7 +3,7 @@
   "cloudfunctionRoot": "cloudfunctions/",
   "projectname": "greenbookstore-app",
   "description": "绿色书屋小程序端",
-  "appid": "wxaf440938f8a30993",
+  "appid": "wx783aabee796d33ba",
   "setting": {
     "urlCheck": true,
     "es6": false,

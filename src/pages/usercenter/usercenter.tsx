@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Image } from '@tarojs/components'
 import { login, getUserFlag } from '../../service/login'
+import pay from '../../service/pay'
 import './usercenter.less'
 
 

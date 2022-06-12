@@ -248,7 +248,7 @@ const getOrderList = async (event) => {
   const _ = db.command;
   let ret = [];
   let orderData = [];
-  let book_id = [];
+  let ISBN = [];
   let bookData = [];
 
   //查询订单
@@ -262,7 +262,7 @@ const getOrderList = async (event) => {
       .then((res) => {
         orderData = res.data;
         orderData.forEach((item) => {
-          book_id.push(item.book_id);
+          ISBN.push(item.ISBN);
         })
       })
   }
@@ -280,14 +280,16 @@ const getOrderList = async (event) => {
       .then((res) => {
         orderData = res.data;
         orderData.forEach((item) => {
-          book_id.push(item.book_id);
+          ISBN.push(item.ISBN);
         })
       })
   }
 
   //查询订单的书籍
   await db.collection('book')
-    .where({ _id: _.in(book_id) })
+    .where({
+      _id: _.in(ISBN)
+    })
     .get()
     .then((res) => {
       bookData = res.data;
@@ -299,7 +301,7 @@ const getOrderList = async (event) => {
       }
 
       for (let i = 0; i < orderData.length; i++) {
-        let obj = Object.assign({}, map.get(orderData[i].book_id), orderData[i])
+        let obj = Object.assign({}, map.get(orderData[i].ISBN), orderData[i])
         ret.push(obj);
       }
     })
@@ -513,6 +515,13 @@ const addAdvice = async (event) => {
     })
 }
 
+const pay = async (event) => {
+  const res=await cloud.cloudPay.unifiedOrder({
+    body:'测试支付',
+    
+  })
+}
+
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -568,6 +577,9 @@ exports.main = async (event, context) => {
     }
     case 'addAdvice': {
       return addAdvice(event)
+    }
+    case 'pay':{
+      return pay(event)
     }
     default: {
       return '云函数调用失败'

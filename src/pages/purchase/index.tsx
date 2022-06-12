@@ -2,6 +2,8 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Image } from '@tarojs/components'
 import { AtIcon, AtButton } from 'taro-ui'
+import { Book } from '../../components/common/common'
+import pay from '../../service/pay'
 import './index.less'
 
 // const receiveInformationList = [
@@ -56,7 +58,8 @@ export default class Index extends Component {
   }
 
   // 提交订单
-  handleSubmitOrder = () => {
+  const handleSubmitOrder = (): void => {
+    pay(bookList,totalPrice)
     // if (receiveInformationList.length === 0)
     //   Taro.showToast({
     //     title: '请先选择地址',

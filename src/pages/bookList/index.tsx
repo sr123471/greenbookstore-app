@@ -3,38 +3,63 @@ import Taro, { getCurrentInstance } from '@tarojs/taro'
 import { View, Image, ScrollView } from '@tarojs/components'
 import { AtSearchBar, AtIcon, AtDivider, AtActivityIndicator } from 'taro-ui'
 import { cloudCall, dataCreator } from '../../service/bookList'
+import { Book } from '../../components/common/common'
 import './index.less'
-export default class Index extends Component {
+interface State {
+  //当前学校
+  currentSchool: string;
+  //当前书籍列表展示界面展示的书籍类型
+  currentBookType: 'publicBook' | 'majorBook' | 'examBook' | 'novelBook';
+  //搜索框内容
+  searchValue: string;
+  //排序方式，默认按综合synthesis排序
+  activeSort: string;
+  activeSortOfPrice_asc: boolean;
+  activeSortOfPrice_desc: boolean;
+  //书籍列表
+  bookList: Book[];
+  //用于分页，偏移量
+  offset: number;
+  //用于分页，每次请求书本的数量
+  limit: number;
+  //数据库中书本的总数
+  total: number;
+  //下滑加载的loading样式
+  isActivityIndicatorOpened: boolean;
+  scrollTop: number;
+}
+export default class Index extends Component<any, State> {
 
-  state = {
-    currentSchool: Taro.getStorageSync('currentSchool'),
+  readonly state: Readonly<State> = {
+    currentSchool: Taro.getStorageSync('userInfo').userSchool,
     currentBookType: Taro.getStorageSync('currentBookType'),
-    value: '',
+    searchValue: '',
     activeSort: 'synthesis',
     activeSortOfPrice_asc: false,
     activeSortOfPrice_desc: false,
     bookList: [],
     offset: 0,
-    limit: 4,
+    limit: 10,
     total: 0,
     isActivityIndicatorOpened: false,
+    scrollTop: -1,
   }
 
-  componentWillMount() {
-    this.setState({ value: getCurrentInstance().router.params.bookName })
+  componentDidMount(): void {
+    //search页搜索书本返回bookList页时搜索框的书本名称
+    this.setState({ searchValue: getCurrentInstance().router.params.bookName })
     const { currentSchool, currentBookType, activeSort, offset, limit } = this.state;
     Taro.setNavigationBarTitle({
       title: getCurrentInstance().router.params.type // 接收路由的传参
     })
 
     Taro.showLoading({
-      title: '小二处理中',
+      title: '加载中',
       mask: true
     });
 
     let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, activeSort);
-
-    cloudCall('school', data).then(res => {
+    cloudCall('school', data).then((res: any) => {
       this.setState({
         bookList: res.result.data,
         offset: offset + limit,
@@ -44,26 +69,18 @@ export default class Index extends Component {
     })
   }
 
-  componentDidMount() { }
-
-  componentWillUnmount() { }
-
-  componentDidShow() { }
-
-  componentDidHide() { }
-
-  handleToSearchPage = () => {
-    const { value } = this.state;
-    if (value === undefined) {
+  handleToSearchPage = (): void => {
+    const { searchValue } = this.state;
+    if (searchValue === undefined) {
       Taro.navigateTo({ url: '/pages/search/index' });
     } else {
       Taro.navigateBack();
     }
   }
 
-  onChange = () => { }
+  onChange = (): void => { }
 
-  handleChangeSortWay = (value) => {
+  handleChangeSortWay = (value: string): void => {
     const { activeSort, activeSortOfPrice_asc, activeSortOfPrice_desc, } = this.state;
     this.setState({
       activeSort: value,
@@ -72,43 +89,31 @@ export default class Index extends Component {
       offset: 0,
     }, () => {
       const { activeSort, activeSortOfPrice_asc, currentSchool, currentBookType, offset, limit } = this.state;
-      if (activeSort === 'price') {
-        let data = dataCreator('getBookList', currentSchool,
-          currentBookType, offset, limit, activeSortOfPrice_asc === true ? 'asc' : 'desc');
+      let data = dataCreator('getBookList', currentSchool,
+        currentBookType, offset, limit, activeSort === 'price' ? activeSortOfPrice_asc === true ? 'asc' : 'desc' : 'synthesis');
 
-        Taro.showLoading({
-      title: '小二处理中',
-      mask: true
-    });
-        cloudCall('school', data).then(res => {
+      Taro.showLoading({
+        title: '加载中',
+        mask: true
+      });
+      cloudCall('school', data).then((res: any) => {
+        this.setState({
+          bookList: res.result.data,
+          offset: offset + limit,
+          total: res.result.total,
+          scrollTop: 0,
+        }, () => {
           this.setState({
-            bookList: res.result.data,
-            offset: offset + limit,
-            total: res.result.total,
+            scrollTop: -1,
           })
-          Taro.hideLoading();
         })
-      } else {
-        let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, 'synthesis');
-
-        Taro.showLoading({
-      title: '小二处理中',
-      mask: true
-    });
-        cloudCall('school', data).then(res => {
-          this.setState({
-            bookList: res.result.data,
-            offset: offset + limit,
-            total: res.result.total,
-          })
-          Taro.hideLoading();
-        })
-      }
+        Taro.hideLoading();
+      })
     })
   }
 
   // 加入购物车
-  handleAddToCart = () => {
+  handleAddToCart = (): (item: Book) => void => {
     let canClick = true;
     return (item) => {
       if (!canClick) return;
@@ -118,7 +123,7 @@ export default class Index extends Component {
         name: 'school',
         data: {
           action: 'hasBookInCart',
-          userId: '1',
+          userId: Taro.getStorageSync('openid'),
           ISBN: item.ISBN,
         }
       }).then(res => {
@@ -131,7 +136,7 @@ export default class Index extends Component {
             name: 'school',
             data: {
               action: 'addCart',
-              userId: '1',
+              userId: Taro.getStorageSync('openid'),
               book: item,
             }
           }).then(res => {
@@ -148,7 +153,7 @@ export default class Index extends Component {
     };
   }
 
-  handleLinkBookPage = (book) => {
+  handleLinkBookPage = (book: Book): void => {
     Taro.setStorageSync('currentBook', book);
     Taro.navigateTo({ url: '/pages/bookDetail/index' });
   }
@@ -168,8 +173,7 @@ export default class Index extends Component {
       this.setState({ isActivityIndicatorOpened: true })
       let data = dataCreator('getBookList', currentSchool, currentBookType,
         offset, limit, activeSort === 'synthesis' ? 'synthesis' : activeSortOfPrice_asc === true ? 'asc' : 'desc');
-
-      cloudCall('school', data).then(res => {
+      cloudCall('school', data).then((res: any) => {
         const newBookList = bookList.concat(res.result.data);
         this.setState({
           bookList: newBookList,
@@ -183,7 +187,7 @@ export default class Index extends Component {
 
   render() {
     const {
-      value,
+      searchValue,
       activeSort,
       activeSortOfPrice_asc,
       activeSortOfPrice_desc,
@@ -191,20 +195,23 @@ export default class Index extends Component {
       offset,
       total,
       isActivityIndicatorOpened,
+      scrollTop,
     } = this.state;
 
     return (
       <ScrollView
         className='publicBookPage'
         scrollY
+        //当srcollTop的值在改变前后是一致的话，则不会触发任何效果。可以将初始值设为-1，改变值设为0
+        scrollTop={scrollTop}
         onScrollToLower={this.scrollToBottom()}
       >
         <View className='header'>
           <View onClick={this.handleToSearchPage}>
             <AtSearchBar
-              value={value}
+              value={searchValue}
               onChange={this.onChange.bind(this)}
-              placeholder='搜索书名、作者、ISBN'
+              placeholder='输入书名、作者、ISBN进行全局搜索'
               disabled
             />
           </View>

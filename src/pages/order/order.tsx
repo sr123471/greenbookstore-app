@@ -138,7 +138,7 @@ export default function Order() {
 
     if (skip >= total) return;
     let canLoading = true;
-    
+
     return () => {
       setIndicator(true)
 
@@ -149,7 +149,7 @@ export default function Order() {
         Taro.getStorageSync('openid'), limit, skip, showMode)
 
       cloudCall('school', data)
-        .then(res => {
+        .then((res: any) => {
           const newOrderList = order.concat(res.result);
 
           setOrder(newOrderList);

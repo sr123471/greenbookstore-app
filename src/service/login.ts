@@ -6,66 +6,48 @@ const login = () => {
             Taro.showModal({
                 title: '温馨提示',
                 content: '亲，授权微信登录后才能正常使用小程序功能',
+                showCancel: false,
                 success(res) {
-                    console.log(res)
-                    //如果用户点击了确定按钮
-                    if (res.confirm) {
-                        Taro.getUserProfile({
-                            desc: '申请获取基本信息',
-                            success: (res) => {
-                                Taro.checkSession({
-                                    success: function () {
-                                        console.log(Taro.getStorageSync('openid'));
-                                        console.log(Taro.getStorageSync('user'));
-                                        console.log(Taro.getStorageSync('hasUserInfo'));
-                                        //session_key 未过期，并且在本生命周期一直有效
-                                    },
-                                    fail: function () {
-                                        Taro.showLoading({
-                                            title: '小二处理中',
-                                            mask: true,
-                                          });
-                                        // session_key 已经失效，需要重新执行登录流程
-                                        Taro.login({
-                                            success: function (res) {
-                                                if (res.code) {
-                                                    //发起网络请求
-                                                    let data = {
-                                                        action: 'login',
-                                                        code: res.code,
-                                                    };
+                    Taro.getUserProfile({
+                        desc: '申请获取基本信息',
+                        success: (res) => {
+                            Taro.showLoading({
+                                title: '处理中',
+                                mask: true,
+                            });
+                            Taro.login({
+                                success: function (res) {
+                                    if (res.code) {
+                                        //发起网络请求
+                                        let data = {
+                                            action: 'login',
+                                            code: res.code,
+                                        };
+                                        let name = 'school';
 
-                                                    let name = 'school';
-
-                                                    console.log(res)
-
-                                                    Taro.cloud.callFunction({
-                                                        name,
-                                                        data
-                                                    }).then(res => {
-                                                        Taro.setStorageSync('openid', res.result);
-                                                        Taro.hideLoading();
-                                                        resolve(true)
-                                                    })
-                                                } else {
-                                                    Taro.hideLoading();
-                                                    console.log('登录失败！' + res.errMsg)
-                                                }
-                                            }
+                                        Taro.cloud.callFunction({
+                                            name,
+                                            data
+                                        }).then(res => {
+                                            Taro.setStorageSync('openid', res.result);
+                                            resolve(true)
                                         })
+                                    } else {
+                                        Taro.hideLoading();
+                                        console.log('登录失败！' + res.errMsg)
                                     }
-                                })
-                                Taro.setStorageSync('user', res.userInfo);
-                                Taro.setStorageSync('hasUserInfo', true);
-                            },
-
-                            fail: (res) => {
-                                console.log(res)
-                                Taro.setStorageSync('user', {});
-                                Taro.setStorageSync('hasUserInfo', false);
-                            }
-                        })
-                    }
+                                }
+                            });
+                            Taro.setStorageSync('user', res.userInfo);
+                            Taro.setStorageSync('hasUserInfo', true);
+                        },
+                        fail: (res) => {
+                            Taro.setStorageSync('user', {});
+                            Taro.setStorageSync('hasUserInfo', false);
+                            // 若用户拒绝，重新循环登录流程
+                            //login();
+                        }
+                    })
                 }
             })
         }

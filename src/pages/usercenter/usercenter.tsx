@@ -5,7 +5,6 @@ import { login, getUserFlag } from '../../service/login'
 import pay from '../../service/pay'
 import './usercenter.less'
 
-
 function UserCenter() {
 
   let data = {
@@ -14,7 +13,10 @@ function UserCenter() {
   }
 
   if (getUserFlag()) {
-    data = Taro.getStorageSync('user')
+    data = {
+      nickName: Taro.getStorageSync('userInfo').userName,
+      avatarUrl: Taro.getStorageSync('user').avatarUrl
+    }
   }
 
   const [user, setUser] = useState(data);

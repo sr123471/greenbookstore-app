@@ -4,16 +4,10 @@ import { AtSteps, AtDivider } from "taro-ui"
 import { View, Image } from '@tarojs/components'
 import './sellbooks.less'
 
-
-
-export default class Index extends Component<any, any> {
-
-  stepChange() {
-    return;
-  }
-
-  render() {
-    const step1 = [
+const steps = [
+  {
+    id: 1,
+    step: [
       {
         title: '步骤一',
         desc: '将要回收的书籍运到浙外图书馆5楼淘书阁',
@@ -25,8 +19,10 @@ export default class Index extends Component<any, any> {
         }
       },
     ]
-
-    const step2 = [
+  },
+  {
+    id: 2,
+    step: [
       {
         title: '步骤二',
         desc: '工作人员检查书籍并进行扫码登记',
@@ -38,8 +34,10 @@ export default class Index extends Component<any, any> {
         }
       },
     ]
-
-    const step3 = [
+  },
+  {
+    id: 3,
+    step: [
       {
         title: '步骤三',
         desc: '收到转账，完成书籍回收！',
@@ -51,7 +49,16 @@ export default class Index extends Component<any, any> {
         }
       },
     ]
+  },
+]
 
+export default class Index extends Component<any, any> {
+
+  stepChange() {
+    return;
+  }
+
+  render() {
     return (
       <View >
         <View className='container0'>
@@ -59,26 +66,17 @@ export default class Index extends Component<any, any> {
           <View className='line' />
         </View>
 
-        <AtSteps
-          className='list'
-          items={step1}
-          current={0}
-          onChange={this.stepChange}
-        />
-
-        <AtSteps
-          className='list'
-          items={step2}
-          current={0}
-          onChange={this.stepChange}
-        />
-
-        <AtSteps
-          className='list'
-          items={step3}
-          current={0}
-          onChange={this.stepChange}
-        />
+        {
+          steps.map(item =>
+            <AtSteps
+              key={item.id}
+              className='list'
+              items={item.step}
+              current={0}
+              onChange={this.stepChange}
+            />
+          )
+        }
 
         <AtDivider content='联系方式' fontColor='#eb2f96' lineColor='#faad14' />
 

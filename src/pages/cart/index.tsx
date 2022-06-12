@@ -1,12 +1,20 @@
 import { Component } from 'react'
-import Taro, { useTabItemTap } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { View, Image, Text } from '@tarojs/components'
 import { AtIcon, AtInputNumber, AtButton } from 'taro-ui'
+import { Book } from '../../components/common/common'
 import './index.less'
+interface State {
+  showContent: boolean,
+  isManagement: boolean,
+  cartList: Book[],
+  selectAll: boolean,
+  selectItemNum: number,
+  totalPrice: number,
+}
+export default class Index extends Component<any, State> {
 
-export default class Index extends Component {
-
-  state = {
+  readonly state: Readonly<State> = {
     showContent: false,
     isManagement: true,
     cartList: [],
@@ -15,9 +23,10 @@ export default class Index extends Component {
     totalPrice: 0,
   };
 
-  componentWillMount() {
+  // 每次点击购物车都要重新加载一遍页面，防止用户刚刚添加进购物车的商品看不到
+  componentDidShow() {
     Taro.showLoading({
-      title: '小二处理中',
+      title: '加载中',
       mask: true
     });
     Taro.cloud.callFunction({
@@ -26,40 +35,32 @@ export default class Index extends Component {
         action: 'getCartList',
         userId: Taro.getStorageSync('openid'),
       }
-    }).then(res => {
-      console.log(res)
+    }).then((res: any) => {
       this.setState({
         cartList: res.result?.cartList,
         showContent: true,
+        selectAll: res.result.cartList.every(item => item.isSelect === true)
       })
       Taro.hideLoading();
     })
   }
 
-  componentDidMount() { }
-
-  componentWillUnmount() { }
-
-  componentDidShow() { }
-
-  componentDidHide() { }
-
-  handleLinkToHome = () => {
+  handleLinkToHome = (): void => {
     Taro.switchTab({ url: '/pages/home/index' })
   }
 
-  handleLinkToBookDetailPage = () => {
+  handleLinkToBookDetailPage = (): void => {
     Taro.navigateTo({ url: '/pages/bookDetail/index' })
   }
 
   // 管理购物车
-  handleManage = () => {
+  handleManage = (): void => {
     const { isManagement } = this.state
     this.setState({ isManagement: !isManagement })
   }
 
   // 计算合计价格
-  calculateTotalPrice(cartList) {
+  calculateTotalPrice(cartList: Book[]): number {
     // reduce从数组的第一项开始归并
     return cartList.reduce((previousValue, currentValue) => {
       return previousValue + (currentValue.isSelect ? currentValue.presentPrice : 0) * currentValue.selectQuantity;
@@ -67,7 +68,7 @@ export default class Index extends Component {
   }
 
   // 计算选中的商品数量
-  calculateSelectItemNum(cartList) {
+  calculateSelectItemNum(cartList: Book[]): number {
     const newCartList = cartList.map(item => (
       { ...item, isSelect: item.isSelect ? 1 : 0 }
     ));
@@ -76,16 +77,8 @@ export default class Index extends Component {
     }, 0);
   }
 
-  // // 选中的商品列表
-  // selectedBookList = (type) => {
-  //   const { cartList } = this.state;
-  //   if (type === 'delete') {
-
-  //   }
-  // }
-
   // 增加或减少商品购买数量
-  handleChange = (ISBN, value) => {
+  handleChange = (ISBN: string, value: number): void => {
     const { cartList } = this.state;
     const newCartList = cartList.map(item =>
       ({ ...item, selectQuantity: item.ISBN === ISBN ? value : item.selectQuantity })
@@ -100,8 +93,32 @@ export default class Index extends Component {
   }
 
   // 选择购物车中的商品,type为selectOne时是点击了一个商品，为selectAll时点击了全选按钮
-  handleSelectItem = (ISBN, type) => {
+  handleSelectItem = (ISBN: string, type: string): void => {
     const { cartList, selectAll } = this.state;
+
+    // 云开发不能将Boolean字段值直接取反，所以得前端传值到后端，后端不能直接取反
+    if (type === 'selectOne') {
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'selectOneItem',
+          openid: Taro.getStorageSync('openid'),
+          ISBN,
+          isSelect: !cartList.find(item => item.ISBN === ISBN)?.isSelect,
+        }
+      })
+    } else {
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'selectAllItem',
+          openid: Taro.getStorageSync('openid'),
+          isSelect: !selectAll,
+        }
+      })
+    }
+
+    // 同步更新state
     const newCartList = cartList.map(item => (
       { ...item, isSelect: type === 'selectOne' ? (item.ISBN === ISBN ? !item.isSelect : item.isSelect) : !selectAll }
     ));
@@ -117,7 +134,7 @@ export default class Index extends Component {
   }
 
   // 结算或者删除购物车中商品
-  handleFinishOrDelete = () => {
+  handleFinishOrDelete = (): void => {
     const { cartList, isManagement, selectItemNum } = this.state;
     if (isManagement) {
       if (selectItemNum === 0) {
@@ -142,10 +159,10 @@ export default class Index extends Component {
       } else {
         // 删除商品
         Taro.showLoading({
-      title: '小二处理中',
-      mask: true
-    });
-        const ISBNList = [];
+          title: '处理中',
+          mask: true
+        });
+        const ISBNList: string[] = [];
         cartList.forEach(item => {
           if (item.isSelect === true) {
             ISBNList.push(item.ISBN);

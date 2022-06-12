@@ -10,9 +10,6 @@ export default class Index extends Component<any, any> {
 
   state = {
     name: '',
-    school: '',
-    academy: '',
-    major: '',
     phone: '',
   }
 
@@ -22,17 +19,18 @@ export default class Index extends Component<any, any> {
       openid: Taro.getStorageSync('openid')
     }
 
+    Taro.showLoading({
+      title: '加载中',
+      mask: true,
+    });
     cloudCall('school', data)
-      .then((res) => {
+      .then((res: any) => {
         let rst = res.result;
-        console.log(rst);
         this.setState({
-          name:rst.name,
-          school:rst.school,
-          academy:rst.academy,
-          major:rst.major,
-          phone:rst.phone,
-        })
+          name: rst.name,
+          phone: rst.phone,
+        });
+        Taro.hideLoading();
       })
   }
 
@@ -49,11 +47,8 @@ export default class Index extends Component<any, any> {
         </View>
         <View className='info'>
           <AtList>
-            <AtListItem title='姓名' extraText={this.state.name} />
-            <AtListItem title='学校' extraText={this.state.school} />
-            <AtListItem title='学院' extraText={this.state.academy} />
-            <AtListItem title='专业' extraText={this.state.major} />
-            <AtListItem title='电话' extraText={this.state.phone} />
+            <AtListItem title='昵称' extraText={this.state.name} />
+            <AtListItem title='电话号码' extraText={this.state.phone} />
 
             <AtListItem
               onClick={this.toChangeUserInfo.bind(this)}
@@ -66,7 +61,6 @@ export default class Index extends Component<any, any> {
           </AtList>
         </View>
       </View>
-      //修改个人信息页面暂时未做
     )
   }
 

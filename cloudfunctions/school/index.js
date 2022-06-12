@@ -1,13 +1,18 @@
 const cloud = require('wx-server-sdk');
 const rp = require('request-promise');
-cloud.init()
+cloud.init({
+  env: 'test-3gvszt0af35408ad'
+  // env: 'release-2gu9vjw481860c6a'
+})
 
 // 初始化首页信息，将获取学校、学院、专业、考试书籍种类写在一起
 const getHomepageInitialData = async (event) => {
   const db = cloud.database();
   const data = {
     schoolList: [],
-    currentSchoolData: {},
+    academyList: [],
+    majorList: [],
+    examList: [],
   }
 
   // 获取所有学校
@@ -24,14 +29,31 @@ const getHomepageInitialData = async (event) => {
       })
     })
 
-  // 获取选中的学校信息
-  await db.collection('school')
+  await db.collection('academy')
     .where({
       schoolName: event.schoolName
     })
     .get()
     .then(res => {
-      data.currentSchoolData = res.data[0];
+      data.academyList = res.data;
+    })
+
+  await db.collection('major')
+    .where({
+      schoolName: event.schoolName
+    })
+    .get()
+    .then(res => {
+      data.majorList = res.data;
+    })
+
+  await db.collection('exam')
+    .where({
+      schoolName: event.schoolName
+    })
+    .get()
+    .then(res => {
+      data.examList = res.data;
     })
 
   return data;
@@ -39,6 +61,7 @@ const getHomepageInitialData = async (event) => {
 
 // 书籍列表展示，根据用户选择的是公共课、专业课或考试书籍来展示，分页展示
 const getBookList = async (event) => {
+  console.log(event)
   const db = cloud.database();
   const _ = db.command;
   let data = {};
@@ -47,7 +70,7 @@ const getBookList = async (event) => {
   let matchObj = {
     schoolName: event.schoolName,
   };
-  if (event.bookType === 'publicBook') {
+  if (event.bookType === 'publicBook' || event.bookType === 'novelBook') {
     matchObj = {
       ...matchObj,
       bookType: event.bookType,
@@ -69,14 +92,29 @@ const getBookList = async (event) => {
       stock: _.gt(0),
     }
   } else {
-    matchObj = {
-      ...matchObj,
-      bookName: db.RegExp({
-        regexp: event.bookName,
-        options: 'i',
-      }),
-      stock: _.gt(0),
-    }
+    // 搜索框搜索场景
+    matchObj = _.or([{
+        ...matchObj,
+        ISBN: event.bookName,
+        stock: _.gt(0),
+      },
+      {
+        ...matchObj,
+        bookName: db.RegExp({
+          regexp: event.bookName,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+      {
+        ...matchObj,
+        author: db.RegExp({
+          regexp: event.bookName,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+    ])
   }
 
   // 获取符合记录的总数
@@ -131,18 +169,30 @@ const searchBook = async (event) => {
   const _ = db.command;
   let data = [];
   await db.collection('book')
-    .where({
-      // 这个正则匹配的到中文下的小括号（），匹配不到英文下的小括号()，为啥？
-      bookName: db.RegExp({
-        regexp: event.value,
-        options: 'i',
-      }),
-      stock: _.gt(0),
-    })
+    // 多字段匹配
+    .where(_.or([{
+        ISBN: event.value,
+        stock: _.gt(0),
+      },
+      {
+        // 这个正则匹配的到中文下的小括号（），匹配不到英文下的小括号()，为啥？
+        bookName: db.RegExp({
+          regexp: event.value,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+      {
+        author: db.RegExp({
+          regexp: event.value,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+    ]))
     .limit(10)
     .get()
     .then(res => {
-      console.log(res)
       data = res.data;
     })
   return data;
@@ -197,6 +247,37 @@ const addCart = async (event) => {
     })
 }
 
+// 将购物车中的一个商品标记为选中或未选中
+const selectOneItem = async (event) => {
+  const db = cloud.database();
+  const _ = db.command;
+  await db.collection('user')
+    .where({
+      open_id: event.openid,
+      'cartList.ISBN': event.ISBN,
+    })
+    .update({
+      data: {
+        'cartList.$.isSelect': event.isSelect,
+      }
+    })
+}
+
+// 将购物车中的所以商品标记为选中或未选中
+const selectAllItem = async (event) => {
+  const db = cloud.database();
+  const _ = db.command;
+  await db.collection('user')
+    .where({
+      open_id: event.openid,
+    })
+    .update({
+      data: {
+        'cartList.$[].isSelect': event.isSelect,
+      }
+    })
+}
+
 // 删除购物车中的一个或几个商品
 const deleteCart = async (event) => {
   const db = cloud.database();
@@ -227,9 +308,7 @@ const getOrderCounts = async (event) => {
       .count();
     console.log(count)
     return count;
-  }
-
-  else {
+  } else {
     let count = await db.collection('order')
       .where({
         open_id: event.open_id,
@@ -255,7 +334,9 @@ const getOrderList = async (event) => {
 
   if (event.status === 'allorder') {
     await db.collection('order')
-      .where({ open_id: event.open_id })
+      .where({
+        open_id: event.open_id
+      })
       .limit(event.limit)
       .skip(event.skip)
       .get()
@@ -265,9 +346,7 @@ const getOrderList = async (event) => {
           ISBN.push(item.ISBN);
         })
       })
-  }
-
-  else {
+  } else {
     console.log(1)
     await db.collection('order')
       .where({
@@ -316,8 +395,8 @@ const login = async (event) => {
   let options = {
     uri: 'https://api.weixin.qq.com/sns/jscode2session',
     qs: {
-      appid: 'wxaf440938f8a30993',
-      secret: 'b5e31f08f66706ed9c624a0bea95ca07',
+      appid: 'wx783aabee796d33ba',
+      secret: '1ef46c330665567705e32a755b1616cb',
       js_code: event.code,
       grant_type: 'authorization_code'
     },
@@ -347,9 +426,6 @@ const setUserInfo = async (event) => {
     .update({
       data: {
         name: event.name,
-        school: event.school,
-        major: event.major,
-        academy: event.academy,
         phone: event.phone
       }
     })
@@ -364,21 +440,21 @@ const setUserInfo = async (event) => {
 const isInfoComplete = async (event) => {
   const db = cloud.database();
   let rst = await db.collection('user')
-    .where({ open_id: event.openid })
+    .where({
+      open_id: event.openid
+    })
     .get()
     .then((res) => {
-      console.log(res)
       if (res.data.length === 0) {
         // 插入新用户
         addUser(event.openid);
-        return false;
-      }
-      else {
-        if (isValid(res.data[0])) {
-          return true;
-        }
-        else {
-          return false;
+        return {
+          isInfoComplete: false
+        };
+      } else {
+        return {
+          isInfoComplete: isValid(res.data[0]),
+          userInfo: res.data[0]
         }
       }
     })
@@ -388,7 +464,7 @@ const isInfoComplete = async (event) => {
 
 // 校验data是否含有完整的个人信息
 function isValid(data) {
-  let keys = ['major', 'school', 'academy', 'phone', 'name'];
+  let keys = ['phone', 'name'];
   for (let i = 0; i < keys.length; i++) {
     if (data[keys[i]] === undefined || data[keys[i]] === '') {
       return false;
@@ -405,12 +481,9 @@ const addUser = async (openid) => {
     .add({
       data: {
         open_id: openid,
-        academy: '',
-        major: '',
         cartList: [],
         name: '',
         phone: '',
-        school: ''
       }
     })
 }
@@ -419,67 +492,14 @@ const addUser = async (openid) => {
 const getUserInfo = async (event) => {
   const db = cloud.database();
   let rst = await db.collection('user')
-    .where({ open_id: event.openid })
+    .where({
+      open_id: event.openid
+    })
     .get()
     .then((res) => {
       return res.data[0];
     })
   return rst;
-}
-
-// 获取学校选择栏
-const getSchool = async () => {
-  const db = cloud.database();
-  let schoolList = await db.collection('school')
-    .get()
-    .then((res) => {
-      let temp = res.data;
-      let rst = [];
-      temp.forEach((val) => {
-        rst.push(val.schoolName);
-      })
-      return rst;
-    })
-  return schoolList;
-}
-
-// 获取学院选择栏
-const getAcademy = async (event) => {
-  const db = cloud.database();
-  let academyList = await db.collection('academy')
-    .where({ schoolName: event.schoolName })
-    .get()
-    .then((res) => {
-      console.log(res)
-      let temp = res.data;
-      let rst = [];
-      temp.forEach((val) => {
-        rst.push(val.academyName);
-      })
-      return rst;
-    })
-  return academyList;
-}
-
-// 获取专业选择栏
-const getMajor = async (event) => {
-  const db = cloud.database();
-  let majorList = await db.collection('major')
-    .where({
-      schoolName: event.schoolName,
-      academyName: event.academyName
-    })
-    .get()
-    .then((res) => {
-      console.log(res)
-      let temp = res.data;
-      let rst = [];
-      temp.forEach((val) => {
-        rst.push(val.majorName);
-      })
-      return rst;
-    })
-  return majorList;
 }
 
 const addAdvice = async (event) => {
@@ -516,9 +536,9 @@ const addAdvice = async (event) => {
 }
 
 const pay = async (event) => {
-  const res=await cloud.cloudPay.unifiedOrder({
-    body:'测试支付',
-    
+  const res = await cloud.cloudPay.unifiedOrder({
+    body: '测试支付',
+
   })
 }
 
@@ -548,6 +568,12 @@ exports.main = async (event, context) => {
     case 'addCart': {
       return addCart(event)
     }
+    case 'selectOneItem': {
+      return selectOneItem(event)
+    }
+    case 'selectAllItem': {
+      return selectAllItem(event)
+    }
     case 'deleteCart': {
       return deleteCart(event)
     }
@@ -563,22 +589,13 @@ exports.main = async (event, context) => {
     case 'getUserInfo': {
       return getUserInfo(event)
     }
-    case 'getSchool': {
-      return getSchool()
-    }
-    case 'getAcademy': {
-      return getAcademy(event)
-    }
-    case 'getMajor': {
-      return getMajor(event)
-    }
     case 'getOrderCounts': {
       return getOrderCounts(event)
     }
     case 'addAdvice': {
       return addAdvice(event)
     }
-    case 'pay':{
+    case 'pay': {
       return pay(event)
     }
     default: {

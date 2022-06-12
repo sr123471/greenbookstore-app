@@ -8,7 +8,8 @@ class App extends Component {
 
   componentDidMount() {
     Taro.cloud.init({
-      env: 'release-2gu9vjw481860c6a'
+      env: 'test-3gvszt0af35408ad'
+      // env: 'release-2gu9vjw481860c6a'
     })
   }
 

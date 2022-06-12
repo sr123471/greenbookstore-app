@@ -162,7 +162,7 @@ export default class Index extends Component<any, State> {
           title: '处理中',
           mask: true
         });
-        const ISBNList = [];
+        const ISBNList: string[] = [];
         cartList.forEach(item => {
           if (item.isSelect === true) {
             ISBNList.push(item.ISBN);

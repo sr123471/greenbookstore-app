@@ -26,6 +26,7 @@ interface State {
   total: number;
   //下滑加载的loading样式
   isActivityIndicatorOpened: boolean;
+  scrollTop: number;
 }
 export default class Index extends Component<any, State> {
 
@@ -41,6 +42,7 @@ export default class Index extends Component<any, State> {
     limit: 10,
     total: 0,
     isActivityIndicatorOpened: false,
+    scrollTop: -1,
   }
 
   componentDidMount(): void {
@@ -87,38 +89,26 @@ export default class Index extends Component<any, State> {
       offset: 0,
     }, () => {
       const { activeSort, activeSortOfPrice_asc, currentSchool, currentBookType, offset, limit } = this.state;
-      if (activeSort === 'price') {
-        let data = dataCreator('getBookList', currentSchool,
-          currentBookType, offset, limit, activeSortOfPrice_asc === true ? 'asc' : 'desc');
+      let data = dataCreator('getBookList', currentSchool,
+        currentBookType, offset, limit, activeSort === 'price' ? activeSortOfPrice_asc === true ? 'asc' : 'desc' : 'synthesis');
 
-        Taro.showLoading({
-          title: '加载中',
-          mask: true
-        });
-        cloudCall('school', data).then((res: any) => {
+      Taro.showLoading({
+        title: '加载中',
+        mask: true
+      });
+      cloudCall('school', data).then((res: any) => {
+        this.setState({
+          bookList: res.result.data,
+          offset: offset + limit,
+          total: res.result.total,
+          scrollTop: 0,
+        }, () => {
           this.setState({
-            bookList: res.result.data,
-            offset: offset + limit,
-            total: res.result.total,
+            scrollTop: -1,
           })
-          Taro.hideLoading();
         })
-      } else {
-        let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, 'synthesis');
-
-        Taro.showLoading({
-          title: '加载中',
-          mask: true
-        });
-        cloudCall('school', data).then((res: any) => {
-          this.setState({
-            bookList: res.result.data,
-            offset: offset + limit,
-            total: res.result.total,
-          })
-          Taro.hideLoading();
-        })
-      }
+        Taro.hideLoading();
+      })
     })
   }
 
@@ -170,7 +160,7 @@ export default class Index extends Component<any, State> {
 
   // onScrollToLower方法存在问题，靠近底部时会多次调用，而不是只调用一次，要做触发限制
   // 通过函数节流来解决，运用到了闭包
-  scrollToBottom = (): () => void => {
+  scrollToBottom = () => {
     const { currentSchool, currentBookType, activeSort, activeSortOfPrice_asc, bookList, offset, total, limit } = this.state;
     // 如果偏移量大于等于数据库中书本的总数，则说明已显示完所有的书本，直接return
     if (offset >= total) return;
@@ -205,12 +195,15 @@ export default class Index extends Component<any, State> {
       offset,
       total,
       isActivityIndicatorOpened,
+      scrollTop,
     } = this.state;
 
     return (
       <ScrollView
         className='publicBookPage'
         scrollY
+        //当srcollTop的值在改变前后是一致的话，则不会触发任何效果。可以将初始值设为-1，改变值设为0
+        scrollTop={scrollTop}
         onScrollToLower={this.scrollToBottom()}
       >
         <View className='header'>
@@ -218,7 +211,7 @@ export default class Index extends Component<any, State> {
             <AtSearchBar
               value={searchValue}
               onChange={this.onChange.bind(this)}
-              placeholder='搜索书名、作者、ISBN'
+              placeholder='输入书名、作者、ISBN进行全局搜索'
               disabled
             />
           </View>

@@ -1,7 +1,8 @@
 const cloud = require('wx-server-sdk');
 const rp = require('request-promise');
 cloud.init({
-  env: 'release-2gu9vjw481860c6a'
+  env: 'test-3gvszt0af35408ad'
+  // env: 'release-2gu9vjw481860c6a'
 })
 
 // 初始化首页信息，将获取学校、学院、专业、考试书籍种类写在一起
@@ -91,14 +92,29 @@ const getBookList = async (event) => {
       stock: _.gt(0),
     }
   } else {
-    matchObj = {
-      ...matchObj,
-      bookName: db.RegExp({
-        regexp: event.bookName,
-        options: 'i',
-      }),
-      stock: _.gt(0),
-    }
+    // 搜索框搜索场景
+    matchObj = _.or([{
+        ...matchObj,
+        ISBN: event.bookName,
+        stock: _.gt(0),
+      },
+      {
+        ...matchObj,
+        bookName: db.RegExp({
+          regexp: event.bookName,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+      {
+        ...matchObj,
+        author: db.RegExp({
+          regexp: event.bookName,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+    ])
   }
 
   // 获取符合记录的总数
@@ -153,14 +169,27 @@ const searchBook = async (event) => {
   const _ = db.command;
   let data = [];
   await db.collection('book')
-    .where({
-      // 这个正则匹配的到中文下的小括号（），匹配不到英文下的小括号()，为啥？
-      bookName: db.RegExp({
-        regexp: event.value,
-        options: 'i',
-      }),
-      stock: _.gt(0),
-    })
+    // 多字段匹配
+    .where(_.or([{
+        ISBN: event.value,
+        stock: _.gt(0),
+      },
+      {
+        // 这个正则匹配的到中文下的小括号（），匹配不到英文下的小括号()，为啥？
+        bookName: db.RegExp({
+          regexp: event.value,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+      {
+        author: db.RegExp({
+          regexp: event.value,
+          options: 'i',
+        }),
+        stock: _.gt(0),
+      },
+    ]))
     .limit(10)
     .get()
     .then(res => {

@@ -300,6 +300,8 @@ const getOrderCounts = async (event) => {
   const db = cloud.database();
   const _ = db.command;
 
+  console.log(event)
+
   if (event.status === 'allorder') {
     let count = await db.collection('order')
       .where({

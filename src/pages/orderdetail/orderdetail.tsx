@@ -19,26 +19,51 @@ export default function OrderDetail() {
       let year = receiveTime.getFullYear()
       let month = receiveTime.getMonth() + 1
       let day = receiveTime.getDate()
-      let h = receiveTime.getHours()
-      let m = receiveTime.getMinutes()
-      let s = receiveTime.getSeconds()
+      let h = receiveTime.getHours().toString()
+      let m = receiveTime.getMinutes().toString()
+      let s = receiveTime.getSeconds().toString()
+
+      if (h.length == 1) {
+        h = '0' + h
+      }
+
+      if (m.length == 1) {
+        m = '0' + m
+      }
+
+      if (s.length == 1) {
+        s = '0' + s
+      }
 
       data.receiveTime = `${year}-${month}-${day} ${h}:${m}:${s}`
-      if (s === 0) {
-        data.receiveTime += '0';
+
+      if (year === 1970) {
+        data.receiveTime = '未签收'
       }
+
+
 
       year = createTime.getFullYear()
       month = createTime.getMonth() + 1
       day = createTime.getDate()
-      h = createTime.getHours()
-      m = createTime.getMinutes()
-      s = createTime.getSeconds()
+      h = createTime.getHours().toString()
+      m = createTime.getMinutes().toString()
+      s = createTime.getSeconds().toString()
+
+      if (h.length == 1) {
+        h = '0' + h
+      }
+
+      if (m.length == 1) {
+        m = '0' + m
+      }
+
+      if (s.length == 1) {
+        s = '0' + s
+      }
 
       data.createTime = `${year}-${month}-${day} ${h}:${m}:${s}`
-      if (s === 0) {
-        data.createTime += '0';
-      }
+
 
       setOrder(data)
     })

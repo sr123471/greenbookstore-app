@@ -12,7 +12,8 @@ const pay = (bookList, money) => {
             ISBN: item.ISBN,
             name: item.bookName,
             presentPrice: item.presentPrice,
-            num: item.selectQuantity
+            num: item.selectQuantity,
+            imgURL:item.imgURL
         }
 
         tobuy.push(temp)
@@ -25,18 +26,22 @@ const pay = (bookList, money) => {
         data: {
             type: 'pay',
             book: tobuy,
-            total: money
+            total: money,
+            openid: Taro.getStorageSync('openid'),
         },
         success: res => {
             // get resource ID
             const payment = res.result.payment
+            // console.log(res)
             Taro.requestPayment({
                 ...payment,
                 success(res) {
                     Taro.cloud.callFunction({
                         name: 'do_pay',
                         data: {
-                            type: 'done'
+                            type: 'done',
+                            book: tobuy,
+                            openid: Taro.getStorageSync('openid'),
                         }
                     }).then((res) => {
                         Taro.switchTab({ url: '../home/index' }).then(() => {

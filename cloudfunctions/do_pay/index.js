@@ -4,12 +4,11 @@ const sub_mch_id = require('./key.json').sub_mch_id
 
 
 cloud.init({
-	env: 'release-2gu9vjw481860c6a'
+	env: 'test-3gvszt0af35408ad'
 })
 
 const db = cloud.database();
 const _ = db.command;
-const wxContext = cloud.getWXContext()
 
 
 const uuid = function () {
@@ -34,8 +33,7 @@ const generateNstr = function () {
 	return pwd;
 }
 
-const addOrderDelCart = async (book) => {
-	let openid = wxContext.OPENID
+const addOrderDelCart = async (book,openid) => {
 	let user = await db.collection('user').where({
 		open_id: openid
 	}).get()
@@ -55,36 +53,40 @@ const addOrderDelCart = async (book) => {
 				open_id: openid,
 				receiveTime: null,
 				num: item.num,
-				status:'unReceived'
+				price: item.num * item.presentPrice,
+				status: 'unReceived',
+				imgURL:item.imgURL
 			}
 		})
 	}
 
-	cart=user.cartList
-	// console.log(cart)
+	cart = user.cartList
+	console.log(cart)
 	// console.log(book)
-	
-	for(let i=0;i<cart.length;i++){
-		for(let j=0;j<book.length;j++){
-			item=book[j]
 
-			if(item.ISBN===cart[i].ISBN){
-				cart.splice(i,1)
+	for (let i = 0; i < cart.length; i++) {
+		for (let j = 0; j < book.length; j++) {
+			item = book[j]
+
+			if (item.ISBN === cart[i].ISBN) {
+				cart.splice(i, 1)
 				i--
 				break
 			}
 		}
 	}
 
+	console.log(cart)
+
 	await db.collection('user')
-			.where({
-				open_id: openid
-			})
-			.update({
-				data: {
-					cartList: cart
-				}
-			})
+		.where({
+			open_id: openid
+		})
+		.update({
+			data: {
+				cartList: cart
+			}
+		})
 }
 
 const changeStock = async (book) => {
@@ -119,35 +121,37 @@ exports.main = async (event, context) => {
 	// 	}
 	// }
 
-	if(event.type==='done'){
-		addOrderDelCart(event.book)
+	if (event.type === 'done') {
+		addOrderDelCart(event.book,event.openid)
 		changeStock(event.book)
 		return true;
 	}
 
-	const uid = uuid();
-	const nstr = generateNstr();
-	addOrderDelCart(event.book)
+	else {
 
-	data = {
-		body: "测试微信支付功能",
-		outTradeNo: uid,
-		spbillCreateIp: '127.0.0.1',
-		subMchId: sub_mch_id,
-		totalFee: 1,
-		envId: "release-2gu9vjw481860c6a",
-		functionName: "done_pay",
-		tradeType: 'JSAPI',
-		nonceStr: nstr
+		const uid = uuid();
+		const nstr = generateNstr();
+
+		data = {
+			body: "测试微信支付功能",
+			outTradeNo: uid,
+			spbillCreateIp: '127.0.0.1',
+			subMchId: sub_mch_id,
+			totalFee: 1,
+			envId: "release-2gu9vjw481860c6a",
+			functionName: "done_pay",
+			tradeType: 'JSAPI',
+			nonceStr: nstr
+		}
+		// console.log(data)
+		const res = await cloud.cloudPay.unifiedOrder(data)
+
+		// console.log(res)
+
+		// if (res.returnCode === 'SUCCESS') {
+		// 	addOrderDelCart(event.book)
+		// 	// changeStock(event.book)
+		// }
+		return res
 	}
-	// console.log(data)
-	const res = await cloud.cloudPay.unifiedOrder(data)
-
-	// console.log(res)
-
-	// if (res.returnCode === 'SUCCESS') {
-	// 	addOrderDelCart(event.book)
-	// 	// changeStock(event.book)
-	// }
-	return res
 }

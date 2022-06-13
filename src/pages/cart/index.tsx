@@ -36,10 +36,14 @@ export default class Index extends Component<any, State> {
         userId: Taro.getStorageSync('openid'),
       }
     }).then((res: any) => {
+      const totalPrice = Math.round(this.calculateTotalPrice(res.result?.cartList) * 100) / 100;
+      const selectItemNum = this.calculateSelectItemNum(res.result?.cartList);
       this.setState({
         cartList: res.result?.cartList,
         showContent: true,
-        selectAll: res.result.cartList.every(item => item.isSelect === true)
+        selectAll: res.result.cartList.every(item => item.isSelect === true),
+        totalPrice,
+        selectItemNum
       })
       Taro.hideLoading();
     })
@@ -49,7 +53,8 @@ export default class Index extends Component<any, State> {
     Taro.switchTab({ url: '/pages/home/index' })
   }
 
-  handleLinkToBookDetailPage = (): void => {
+  handleLinkToBookDetailPage = (book): void => {
+    Taro.setStorageSync('currentBook', book);
     Taro.navigateTo({ url: '/pages/bookDetail/index' })
   }
 
@@ -83,7 +88,7 @@ export default class Index extends Component<any, State> {
     const newCartList = cartList.map(item =>
       ({ ...item, selectQuantity: item.ISBN === ISBN ? value : item.selectQuantity })
     )
-    const totalPrice = this.calculateTotalPrice(newCartList);
+    const totalPrice = Math.round(this.calculateTotalPrice(newCartList) * 100) / 100;
     const selectItemNum = this.calculateSelectItemNum(newCartList);
     this.setState({
       cartList: newCartList,
@@ -122,7 +127,8 @@ export default class Index extends Component<any, State> {
     const newCartList = cartList.map(item => (
       { ...item, isSelect: type === 'selectOne' ? (item.ISBN === ISBN ? !item.isSelect : item.isSelect) : !selectAll }
     ));
-    const totalPrice = this.calculateTotalPrice(newCartList);
+    // js中的小数相加会出现无限循环的情况，用四舍五入解决
+    const totalPrice = Math.round(this.calculateTotalPrice(newCartList) * 100) / 100;
     const selectItemNum = this.calculateSelectItemNum(newCartList);
     this.setState({
       cartList: newCartList,
@@ -220,7 +226,7 @@ export default class Index extends Component<any, State> {
                     <View className={item.isSelect === true ? 'iconBg iconBg-active' : 'iconBg'} onClick={this.handleSelectItem.bind(this, item.ISBN, 'selectOne')}>
                       <AtIcon className='icon-check' value='check' size='15'></AtIcon>
                     </View>
-                    <View className='bookArea' onClick={this.handleLinkToBookDetailPage}>
+                    <View className='bookArea' onClick={this.handleLinkToBookDetailPage.bind(this, item)}>
                       <View className='bookImageBg'>
                         <Image className='bookImage' src={item.imgURL} mode='heightFix'></Image>
                       </View>

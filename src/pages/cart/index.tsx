@@ -11,6 +11,7 @@ interface State {
   selectAll: boolean,
   selectItemNum: number,
   totalPrice: number,
+  hasLogin: boolean,
 }
 export default class Index extends Component<any, State> {
 
@@ -21,6 +22,7 @@ export default class Index extends Component<any, State> {
     selectAll: false,
     selectItemNum: 0,
     totalPrice: 0,
+    hasLogin: !Taro.getStorageSync('isNewUser'),
   };
 
   // 每次点击购物车都要重新加载一遍页面，防止用户刚刚添加进购物车的商品看不到
@@ -36,12 +38,13 @@ export default class Index extends Component<any, State> {
         userId: Taro.getStorageSync('openid'),
       }
     }).then((res: any) => {
+      console.log(res)
       const totalPrice = Math.round(this.calculateTotalPrice(res.result?.cartList) * 100) / 100;
       const selectItemNum = this.calculateSelectItemNum(res.result?.cartList);
       this.setState({
-        cartList: res.result?.cartList,
+        cartList: res.result?.cartList || [],
         showContent: true,
-        selectAll: res.result.cartList.every(item => item.isSelect === true),
+        selectAll: res.result?.cartList.every(item => item.isSelect === true),
         totalPrice,
         selectItemNum
       })
@@ -49,8 +52,13 @@ export default class Index extends Component<any, State> {
     })
   }
 
-  handleLinkToHome = (): void => {
-    Taro.switchTab({ url: '/pages/home/index' })
+  handleLinkToLoginOrHome = (): void => {
+    const { hasLogin } = this.state;
+    if (hasLogin) {
+      Taro.switchTab({ url: '/pages/home/index' })
+    } else {
+      Taro.navigateTo({ url: '/pages/login/index' });
+    }
   }
 
   handleLinkToBookDetailPage = (book): void => {
@@ -67,17 +75,17 @@ export default class Index extends Component<any, State> {
   // 计算合计价格
   calculateTotalPrice(cartList: Book[]): number {
     // reduce从数组的第一项开始归并
-    return cartList.reduce((previousValue, currentValue) => {
+    return cartList?.reduce((previousValue, currentValue) => {
       return previousValue + (currentValue.isSelect ? currentValue.presentPrice : 0) * currentValue.selectQuantity;
     }, 0);
   }
 
   // 计算选中的商品数量
   calculateSelectItemNum(cartList: Book[]): number {
-    const newCartList = cartList.map(item => (
+    const newCartList = cartList?.map(item => (
       { ...item, isSelect: item.isSelect ? 1 : 0 }
     ));
-    return newCartList.reduce((previousValue, currentValue) => {
+    return newCartList?.reduce((previousValue, currentValue) => {
       return previousValue + currentValue.isSelect;
     }, 0);
   }
@@ -199,7 +207,8 @@ export default class Index extends Component<any, State> {
       cartList,
       selectAll,
       selectItemNum,
-      totalPrice
+      totalPrice,
+      hasLogin
     } = this.state;
 
     return (
@@ -214,7 +223,7 @@ export default class Index extends Component<any, State> {
             <View className='emptyCart'>
               <AtIcon prefixClass='icon' value='gouwuchekong' size='80'></AtIcon>
               <View>购物车是空的</View>
-              <AtButton className='emptyCartBt' onClick={this.handleLinkToHome}>去逛逛</AtButton>
+              <AtButton className='emptyCartBt' onClick={this.handleLinkToLoginOrHome}>{hasLogin ? '去逛逛' : '去登录'}</AtButton>
             </View> :
             <View>
               <View className='manageArea'>

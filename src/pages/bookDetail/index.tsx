@@ -73,6 +73,10 @@ export default class Index extends Component<any, State> {
     let canClick = true;
 
     return () => {
+      if (Taro.getStorageSync('isNewUser')) {
+        Taro.navigateTo({ url: '/pages/login/index' });
+        return;
+      }
       if (!canClick) return;
       canClick = false;
       Taro.cloud.callFunction({
@@ -110,6 +114,10 @@ export default class Index extends Component<any, State> {
   }
 
   handleLinkToPurchasePage = (): void => {
+    if (Taro.getStorageSync('isNewUser')) {
+      Taro.navigateTo({ url: '/pages/login/index' });
+      return;
+    }
     const { book } = this.state;
     Taro.setStorageSync('settleList', [book]);
     Taro.navigateTo({ url: '/pages/purchase/index' })

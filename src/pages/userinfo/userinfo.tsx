@@ -23,7 +23,7 @@ export default class Index extends Component<any, any> {
       title: '加载中',
       mask: true,
     });
-    cloudCall('school', data)
+    cloudCall('login', data)
       .then((res: any) => {
         let rst = res.result;
         this.setState({

@@ -17,16 +17,12 @@ export default function changeUserInfo() {
   })
 
   useEffect(() => {
-    Taro.atMessage({
-      'message': '您需要完善个人信息才能使用本小程序',
-      'type': 'info'
-    })
     let data = {
       action: 'getUserInfo',
       openid: Taro.getStorageSync('openid')
     }
 
-    cloudCall('school', data)
+    cloudCall('login', data)
       .then((res: any) => {
         let rst = res.result;
         setName(rst.name === '' ? Taro.getStorageSync('user').nickName : rst.name);
@@ -43,15 +39,10 @@ export default function changeUserInfo() {
     setName(value)
   }
 
-  function phoneChange(value) {
-    setPhone(value)
-  }
-
   function submit() {
     Taro.setStorageSync('userInfo', {
-      userName: name,
-      userPhone: phone,
-      openid: Taro.getStorageSync('openid'),
+      name,
+      phone
     })
 
     Taro.showLoading({
@@ -62,9 +53,8 @@ export default function changeUserInfo() {
       action: 'setUserInfo',
       openid: Taro.getStorageSync('openid'),
       name,
-      phone
     }
-    cloudCall('school', data)
+    cloudCall('login', data)
       .then((res) => {
         Taro.hideLoading()
         if (res.result) {
@@ -91,16 +81,6 @@ export default function changeUserInfo() {
             type='text'
             value={name}
             onChange={nameChange}
-          />
-          <AtInput
-            className='form'
-            name='phone'
-            maxlength={11}
-            title='手机号码'
-            type='phone'
-            value={phone}
-            border={false}
-            onChange={phoneChange}
           />
         </AtForm>
         <AtButton onClick={submit} className='button' type='primary'>确定</AtButton>

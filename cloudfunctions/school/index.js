@@ -1,5 +1,4 @@
 const cloud = require('wx-server-sdk');
-const rp = require('request-promise');
 cloud.init({
   env: 'test-3gvszt0af35408ad'
   // env: 'release-2gu9vjw481860c6a'
@@ -390,119 +389,7 @@ const getOrderList = async (event) => {
   return ret;
 }
 
-// 登陆验证并获取openid
-const login = async (event) => {
-  let rst = null;
 
-  let options = {
-    uri: 'https://api.weixin.qq.com/sns/jscode2session',
-    qs: {
-      appid: 'wx783aabee796d33ba',
-      secret: '1ef46c330665567705e32a755b1616cb',
-      js_code: event.code,
-      grant_type: 'authorization_code'
-    },
-    headers: {
-      'User-Agent': 'Request-Promise'
-    },
-    json: true // Automatically parses the JSON string in the response
-  };
-
-  console.log(options)
-
-  await rp(options).then((res) => {
-    rst = res.openid;
-  })
-
-  return rst
-}
-
-// 设置个人信息
-const setUserInfo = async (event) => {
-  const db = cloud.database();
-  const _ = db.command;
-  let rst = await db.collection('user')
-    .where({
-      open_id: event.openid
-    })
-    .update({
-      data: {
-        name: event.name,
-        phone: event.phone
-      }
-    })
-    .then(() => {
-      return true;
-    })
-
-  return rst;
-}
-
-// 校验个人信息是否完整
-const isInfoComplete = async (event) => {
-  const db = cloud.database();
-  let rst = await db.collection('user')
-    .where({
-      open_id: event.openid
-    })
-    .get()
-    .then((res) => {
-      if (res.data.length === 0) {
-        // 插入新用户
-        addUser(event.openid);
-        return {
-          isInfoComplete: false
-        };
-      } else {
-        return {
-          isInfoComplete: isValid(res.data[0]),
-          userInfo: res.data[0]
-        }
-      }
-    })
-
-  return rst;
-}
-
-// 校验data是否含有完整的个人信息
-function isValid(data) {
-  let keys = ['phone', 'name'];
-  for (let i = 0; i < keys.length; i++) {
-    if (data[keys[i]] === undefined || data[keys[i]] === '') {
-      return false;
-    }
-  }
-  return true;
-}
-
-// 插入新用户
-const addUser = async (openid) => {
-  const db = cloud.database();
-  const _ = db.command;
-  await db.collection('user')
-    .add({
-      data: {
-        open_id: openid,
-        cartList: [],
-        name: '',
-        phone: '',
-      }
-    })
-}
-
-// 获取用户信息
-const getUserInfo = async (event) => {
-  const db = cloud.database();
-  let rst = await db.collection('user')
-    .where({
-      open_id: event.openid
-    })
-    .get()
-    .then((res) => {
-      return res.data[0];
-    })
-  return rst;
-}
 
 const addAdvice = async (event) => {
   const db = cloud.database();
@@ -549,9 +436,6 @@ const pay = async (event) => {
 exports.main = async (event, context) => {
 
   switch (event.action) {
-    case 'login': {
-      return login(event)
-    }
     case 'getHomepageInitialData': {
       return getHomepageInitialData(event)
     }
@@ -581,15 +465,6 @@ exports.main = async (event, context) => {
     }
     case 'getOrderList': {
       return getOrderList(event)
-    }
-    case 'setUserInfo': {
-      return setUserInfo(event)
-    }
-    case 'isInfoComplete': {
-      return isInfoComplete(event)
-    }
-    case 'getUserInfo': {
-      return getUserInfo(event)
     }
     case 'getOrderCounts': {
       return getOrderCounts(event)

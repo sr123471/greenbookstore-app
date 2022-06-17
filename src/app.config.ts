@@ -1,6 +1,7 @@
 export default {
   pages: [
     // sr
+    'pages/login/index',
     'pages/home/index',
     'pages/cart/index',
     'pages/bookList/index',

@@ -49,7 +49,7 @@ export default class Index extends Component<any, State> {
   }
 
   async componentDidMount() {
-    await this.getUser();
+    await login();
 
     // 初始化首页信息，包括学校列表和当前选中的学校信息
     let data = dataCreator('getHomepageInitialData', '浙江外国语学院');
@@ -60,42 +60,7 @@ export default class Index extends Component<any, State> {
         majorList: res.result.majorList,
         examList: res.result.examList,
       });
-      Taro.hideLoading();
     });
-  }
-
-  async getUser() {
-    const a = await login();
-    let rst = await this.isInfoComplete();
-
-    Taro.hideLoading();
-    if (!rst) {
-      Taro.reLaunch({
-        url: '../changeUserInfo/changeUserInfo'
-      })
-    }
-  }
-
-  isInfoComplete() {
-    return new Promise((resolve, reject) => {
-      Taro.cloud.callFunction({
-        name: 'school',
-        data: {
-          action: 'isInfoComplete',
-          openid: Taro.getStorageSync('openid')
-        }
-      }).then((res: any) => {
-        // 如果用戶的所有信息都是完整的，就存到storage中
-        if (res.result.isInfoComplete) {
-          Taro.setStorageSync('userInfo', {
-            userName: res.result.userInfo.name,
-            userPhone: res.result.userInfo.phone,
-            openid: Taro.getStorageSync('openid'),
-          })
-        }
-        resolve(res.result.isInfoComplete)
-      })
-    })
   }
 
   // 打开抽屉

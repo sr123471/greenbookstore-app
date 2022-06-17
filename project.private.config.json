@@ -47,8 +47,19 @@
           "pathName": "pages/cart/index",
           "query": "",
           "scene": null
+        },
+        {
+          "name": "pages/usercenter/usercenter",
+          "pathName": "pages/usercenter/usercenter",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/login/index",
+          "pathName": "pages/login/index",
+          "query": "",
+          "scene": null
         }
-        
       ]
     }
   }

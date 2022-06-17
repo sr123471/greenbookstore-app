@@ -116,6 +116,11 @@ export default class Index extends Component<any, State> {
   handleAddToCart = (): (item: Book) => void => {
     let canClick = true;
     return (item) => {
+      // 先检查用户是否登录
+      if (Taro.getStorageSync('isNewUser')) {
+        Taro.navigateTo({ url: '/pages/login/index' });
+        return;
+      }
       if (!canClick) return;
       canClick = false;
       // 判断是否已在购物车中

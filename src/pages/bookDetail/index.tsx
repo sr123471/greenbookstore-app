@@ -12,7 +12,6 @@ interface BookDetailMessage {
 interface State {
   book: Book,
   bookDetailMessageList: BookDetailMessage[],
-  hasBookInCart: boolean,
 }
 
 const arr = [
@@ -34,7 +33,6 @@ export default class Index extends Component<any, State> {
   readonly state: Readonly<State> = {
     book: Taro.getStorageSync('currentBook'),
     bookDetailMessageList: [],
-    hasBookInCart: false,
   }
 
   componentDidMount(): void {
@@ -63,17 +61,6 @@ export default class Index extends Component<any, State> {
         },
       ]
     });
-
-    Taro.cloud.callFunction({
-      name: 'school',
-      data: {
-        action: 'hasBookInCart',
-        userId: Taro.getStorageSync('openid'),
-        ISBN: book.ISBN,
-      }
-    }).then((res: any) => {
-      this.setState({ hasBookInCart: res.result })
-    })
   }
 
   handleLinkToCartPage = (): void => {
@@ -82,39 +69,55 @@ export default class Index extends Component<any, State> {
 
   // 防止用户在短时间内快速点击导致调用多次接口，需要做数据节流
   handleAddToCart = (): () => void => {
-    const { book, hasBookInCart } = this.state;
+    const { book } = this.state;
     let canClick = true;
 
     return () => {
+      if (Taro.getStorageSync('isNewUser')) {
+        Taro.navigateTo({ url: '/pages/login/index' });
+        return;
+      }
       if (!canClick) return;
       canClick = false;
-      if (hasBookInCart === false) {
-        Taro.cloud.callFunction({
-          name: 'school',
-          data: {
-            action: 'addCart',
-            userId: Taro.getStorageSync('openid'),
-            book,
-          }
-        }).then(res => {
-          this.setState({ hasBookInCart: true });
+      Taro.cloud.callFunction({
+        name: 'school',
+        data: {
+          action: 'hasBookInCart',
+          userId: Taro.getStorageSync('openid'),
+          ISBN: book.ISBN,
+        }
+      }).then(res => {
+        if (!!res.result === false) {
           Taro.showToast({
             title: '已加入购物车',
             icon: 'success',
           });
+          Taro.cloud.callFunction({
+            name: 'school',
+            data: {
+              action: 'addCart',
+              userId: Taro.getStorageSync('openid'),
+              book,
+            }
+          }).then(res => {
+            canClick = true;
+          })
+        } else {
+          Taro.showToast({
+            title: '该书已存在购物车中哦',
+            icon: 'none',
+          });
           canClick = true;
-        })
-      } else {
-        Taro.showToast({
-          title: '该书已存在购物车中哦',
-          icon: 'none',
-        });
-        canClick = true;
-      }
+        }
+      })
     };
   }
 
   handleLinkToPurchasePage = (): void => {
+    if (Taro.getStorageSync('isNewUser')) {
+      Taro.navigateTo({ url: '/pages/login/index' });
+      return;
+    }
     const { book } = this.state;
     Taro.setStorageSync('settleList', [book]);
     Taro.navigateTo({ url: '/pages/purchase/index' })

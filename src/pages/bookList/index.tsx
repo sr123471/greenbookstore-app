@@ -59,7 +59,7 @@ export default class Index extends Component<any, State> {
     });
 
     let data = dataCreator('getBookList', currentSchool, currentBookType, offset, limit, activeSort);
-    cloudCall('school', data).then((res: any) => {
+    cloudCall('book', data).then((res: any) => {
       this.setState({
         bookList: res.result.data,
         offset: offset + limit,
@@ -96,7 +96,7 @@ export default class Index extends Component<any, State> {
         title: '加载中',
         mask: true
       });
-      cloudCall('school', data).then((res: any) => {
+      cloudCall('book', data).then((res: any) => {
         this.setState({
           bookList: res.result.data,
           offset: offset + limit,
@@ -178,7 +178,7 @@ export default class Index extends Component<any, State> {
       this.setState({ isActivityIndicatorOpened: true })
       let data = dataCreator('getBookList', currentSchool, currentBookType,
         offset, limit, activeSort === 'synthesis' ? 'synthesis' : activeSortOfPrice_asc === true ? 'asc' : 'desc');
-      cloudCall('school', data).then((res: any) => {
+      cloudCall('book', data).then((res: any) => {
         const newBookList = bookList.concat(res.result.data);
         this.setState({
           bookList: newBookList,

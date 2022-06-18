@@ -18,7 +18,7 @@ export default function Search() {
       setTimer(
         window.setTimeout(() => {
           Taro.cloud.callFunction({
-            name: 'school',
+            name: 'book',
             data: {
               action: 'searchBook',
               value: value,

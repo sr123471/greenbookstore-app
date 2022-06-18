@@ -32,19 +32,19 @@ export default class Index extends Component<any, State> {
       mask: true
     });
     Taro.cloud.callFunction({
-      name: 'school',
+      name: 'cart',
       data: {
         action: 'getCartList',
         userId: Taro.getStorageSync('openid'),
       }
     }).then((res: any) => {
       console.log(res)
-      const totalPrice = Math.round(this.calculateTotalPrice(res.result?.cartList) * 100) / 100;
-      const selectItemNum = this.calculateSelectItemNum(res.result?.cartList);
+      const totalPrice = Math.round(this.calculateTotalPrice(res.result) * 100) / 100;
+      const selectItemNum = this.calculateSelectItemNum(res.result);
       this.setState({
-        cartList: res.result?.cartList || [],
+        cartList: res.result || [],
         showContent: true,
-        selectAll: res.result?.cartList.every(item => item.isSelect === true),
+        selectAll: res.result?.every(item => item.isSelect === true),
         totalPrice,
         selectItemNum
       })
@@ -93,6 +93,16 @@ export default class Index extends Component<any, State> {
   // 增加或减少商品购买数量
   handleChange = (ISBN: string, value: number): void => {
     const { cartList } = this.state;
+
+    Taro.cloud.callFunction({
+      name: 'cart',
+      data: {
+        action: 'alertSelectQuantity',
+        openid: Taro.getStorageSync('openid'),
+        ISBN,
+        selectQuantity: value,
+      }
+    })
     const newCartList = cartList.map(item =>
       ({ ...item, selectQuantity: item.ISBN === ISBN ? value : item.selectQuantity })
     )
@@ -112,7 +122,7 @@ export default class Index extends Component<any, State> {
     // 云开发不能将Boolean字段值直接取反，所以得前端传值到后端，后端不能直接取反
     if (type === 'selectOne') {
       Taro.cloud.callFunction({
-        name: 'school',
+        name: 'cart',
         data: {
           action: 'selectOneItem',
           openid: Taro.getStorageSync('openid'),
@@ -122,7 +132,7 @@ export default class Index extends Component<any, State> {
       })
     } else {
       Taro.cloud.callFunction({
-        name: 'school',
+        name: 'cart',
         data: {
           action: 'selectAllItem',
           openid: Taro.getStorageSync('openid'),
@@ -130,7 +140,6 @@ export default class Index extends Component<any, State> {
         }
       })
     }
-
     // 同步更新state
     const newCartList = cartList.map(item => (
       { ...item, isSelect: type === 'selectOne' ? (item.ISBN === ISBN ? !item.isSelect : item.isSelect) : !selectAll }
@@ -186,14 +195,18 @@ export default class Index extends Component<any, State> {
           item.isSelect === false
         )
         Taro.cloud.callFunction({
-          name: 'school',
+          name: 'cart',
           data: {
             action: 'deleteCart',
             userId: Taro.getStorageSync('openid'),
             ISBNList,
           }
         }).then(res => {
-          this.setState({ cartList: unselectedBookList })
+          this.setState({
+            cartList: unselectedBookList,
+            selectItemNum: 0,
+            totalPrice: 0,
+          })
           Taro.hideLoading();
         })
       }

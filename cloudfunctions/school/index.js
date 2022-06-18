@@ -197,103 +197,6 @@ const searchBook = async (event) => {
   return data;
 }
 
-// 获取购物车列表
-const getCartList = async (event) => {
-  const db = cloud.database();
-  let data = [];
-  await db.collection('user')
-    .where({
-      open_id: event.userId
-    })
-    .get()
-    .then(res => {
-      data = res.data[0];
-    })
-  return data;
-}
-
-// 查找要添加的商品在购物车中是否已有
-const hasBookInCart = async (event) => {
-  const db = cloud.database();
-  const _ = db.command;
-  let hasBookInCart = false;
-  await db.collection('user')
-    .where({
-      open_id: event.userId,
-      cartList: _.elemMatch({
-        ISBN: _.eq(event.ISBN),
-      })
-    })
-    .get()
-    .then(res => {
-      res.data.length !== 0 ? hasBookInCart = true : ''
-    })
-  return hasBookInCart;
-}
-
-// 将商品加入购物车
-const addCart = async (event) => {
-  const db = cloud.database();
-  const _ = db.command;
-  await db.collection('user')
-    .where({
-      open_id: event.userId
-    })
-    .update({
-      data: {
-        cartList: _.push([event.book])
-      }
-    })
-}
-
-// 将购物车中的一个商品标记为选中或未选中
-const selectOneItem = async (event) => {
-  const db = cloud.database();
-  const _ = db.command;
-  await db.collection('user')
-    .where({
-      open_id: event.openid,
-      'cartList.ISBN': event.ISBN,
-    })
-    .update({
-      data: {
-        'cartList.$.isSelect': event.isSelect,
-      }
-    })
-}
-
-// 将购物车中的所以商品标记为选中或未选中
-const selectAllItem = async (event) => {
-  const db = cloud.database();
-  const _ = db.command;
-  await db.collection('user')
-    .where({
-      open_id: event.openid,
-    })
-    .update({
-      data: {
-        'cartList.$[].isSelect': event.isSelect,
-      }
-    })
-}
-
-// 删除购物车中的一个或几个商品
-const deleteCart = async (event) => {
-  const db = cloud.database();
-  const _ = db.command;
-  await db.collection('user')
-    .where({
-      open_id: event.userId
-    })
-    .update({
-      data: {
-        cartList: _.pull({
-          ISBN: _.in(event.ISBNList)
-        })
-      }
-    })
-}
-
 // 获取订单数目
 const getOrderCounts = async (event) => {
   const db = cloud.database();
@@ -389,8 +292,6 @@ const getOrderList = async (event) => {
   return ret;
 }
 
-
-
 const addAdvice = async (event) => {
   const db = cloud.database();
   const _ = db.command;
@@ -444,24 +345,6 @@ exports.main = async (event, context) => {
     }
     case 'searchBook': {
       return searchBook(event)
-    }
-    case 'getCartList': {
-      return getCartList(event)
-    }
-    case 'hasBookInCart': {
-      return hasBookInCart(event)
-    }
-    case 'addCart': {
-      return addCart(event)
-    }
-    case 'selectOneItem': {
-      return selectOneItem(event)
-    }
-    case 'selectAllItem': {
-      return selectAllItem(event)
-    }
-    case 'deleteCart': {
-      return deleteCart(event)
     }
     case 'getOrderList': {
       return getOrderList(event)

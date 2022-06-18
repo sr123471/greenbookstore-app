@@ -125,7 +125,7 @@ export default class Index extends Component<any, State> {
       canClick = false;
       // 判断是否已在购物车中
       Taro.cloud.callFunction({
-        name: 'school',
+        name: 'cart',
         data: {
           action: 'hasBookInCart',
           userId: Taro.getStorageSync('openid'),
@@ -138,7 +138,7 @@ export default class Index extends Component<any, State> {
             icon: 'success',
           });
           Taro.cloud.callFunction({
-            name: 'school',
+            name: 'cart',
             data: {
               action: 'addCart',
               userId: Taro.getStorageSync('openid'),

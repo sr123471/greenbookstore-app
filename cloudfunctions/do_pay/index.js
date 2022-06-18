@@ -90,13 +90,30 @@ const addOrderDelCart = async (book, openid) => {
     })
 }
 
-const changeStock = async (book) => {
+const verifyStock = async (book) => {
 
   for (let i = 0; i < book.length; i++) {
     item = book[i]
     let stk = await db.collection('book').where({
       ISBN: item.ISBN
     }).get()
+    stk = stk.data[0].stock
+
+    if(stk<item.num){
+      return -1
+    }
+  }
+  return 1
+}
+
+const delStock = async (book) => {
+
+  for (let i = 0; i < book.length; i++) {
+    item = book[i]
+    let stk = await db.collection('book').where({
+      ISBN: item.ISBN
+    }).get()
+    let sv = stk.data[0].salesVolume
     stk = stk.data[0].stock
     console.log(stk)
 
@@ -106,7 +123,32 @@ const changeStock = async (book) => {
       })
       .update({
         data: {
-          stock: stk - item.num
+          stock: stk - item.num,
+          salesVolume: sv + item.num
+        }
+      })
+  }
+}
+
+const addStock = async (book) => {
+
+  for (let i = 0; i < book.length; i++) {
+    item = book[i]
+    let stk = await db.collection('book').where({
+      ISBN: item.ISBN
+    }).get()
+    let sv = stk.data[0].salesVolume
+    stk = stk.data[0].stock
+    console.log(stk)
+
+    await db.collection('book')
+      .where({
+        ISBN: item.ISBN
+      })
+      .update({
+        data: {
+          stock: stk + item.num,
+          salesVolume: sv - item.num
         }
       })
   }
@@ -126,9 +168,19 @@ exports.main = async (event, context) => {
 
   if (event.type === 'done') {
     addOrderDelCart(event.book, event.openid)
-    changeStock(event.book)
     return true;
-  } else {
+  } 
+
+  else if(event.type==='stock'){
+    let rst=await verifyStock(event.book)
+    return rst
+  }
+
+  else if(event.type=='revert'){
+    addStock(event.book)
+  }
+  
+  else {
 
     const uid = uuid();
     const nstr = generateNstr();
@@ -146,6 +198,8 @@ exports.main = async (event, context) => {
     }
     // console.log(data)
     const res = await cloud.cloudPay.unifiedOrder(data)
+
+    delStock(event.book)
 
     // console.log(res)
 

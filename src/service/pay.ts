@@ -30,32 +30,62 @@ const pay = (bookList, money) => {
             openid: Taro.getStorageSync('openid'),
         },
         success: res => {
-            // get resource ID
-            const payment = res.result.payment
-            // console.log(res)
-            Taro.requestPayment({
-                ...payment,
-                success(res) {
-                    Taro.cloud.callFunction({
-                        name: 'do_pay',
-                        data: {
-                            type: 'done',
-                            book: tobuy,
-                            openid: Taro.getStorageSync('openid'),
-                        }
-                    }).then((res) => {
-                        Taro.switchTab({ url: '../home/index' }).then(() => {
-                            Taro.showToast({
-                                title: '购买成功！',
-                                icon: 'success',
-                            });
-                        })
-                    })
+
+            Taro.cloud.callFunction({
+                name: 'do_pay',
+                data: {
+                    type: 'stock',
+                    book: tobuy,
+                    total: money,
+                    openid: Taro.getStorageSync('openid'),
                 },
-                fail(err) {
-                    console.log(err);
+            }).then((res2)=>{
+
+                if(res2.result===-1){
+                    Taro.showToast({
+                        title: '库存不足',
+                        icon: 'error',
+                    });
                 }
+                else{
+                    // get resource ID
+                    const payment = res.result.payment
+                    // console.log(res)
+                    Taro.requestPayment({
+                        ...payment,
+                        success(res) {
+                            Taro.cloud.callFunction({
+                                name: 'do_pay',
+                                data: {
+                                    type: 'done',
+                                    book: tobuy,
+                                    openid: Taro.getStorageSync('openid'),
+                                }
+                            }).then((res) => {
+                                Taro.switchTab({ url: '../home/index' }).then(() => {
+                                    Taro.showToast({
+                                        title: '购买成功！',
+                                        icon: 'success',
+                                    });
+                                })
+                            })
+                        },
+                        fail(err) {
+                            console.log(err);
+                            Taro.cloud.callFunction({
+                                name: 'do_pay',
+                                data: {
+                                    type: 'revert',
+                                    book: tobuy,
+                                    openid: Taro.getStorageSync('openid'),
+                                }
+                            })
+                        }
+                    })
+                }
+
             })
+
         },
         fail: err => {
             // handle error

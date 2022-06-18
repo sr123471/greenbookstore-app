@@ -23,6 +23,7 @@ export default function Login() {
           icon: 'success',
           duration: 2000,
         }).then(() => {
+          console.log(res);
           Taro.setStorageSync('isNewUser', false)
           Taro.setStorageSync('userInfo', {
             name: '书友' + time,

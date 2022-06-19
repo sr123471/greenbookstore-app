@@ -37,6 +37,8 @@ export default function Purchase() {
     const totalPrice: number = bookList.reduce((previousValue, currentValue) => {
       return previousValue + currentValue.presentPrice * currentValue.selectQuantity;
     }, 0);
+    console.log(totalPrice)
+    console.log(Math.round(totalPrice * 100) / 100)
     setBookList(bookList);
     setTotalPrice(Math.round(totalPrice * 100) / 100);
   }, [])

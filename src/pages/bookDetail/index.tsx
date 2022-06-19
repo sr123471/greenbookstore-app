@@ -119,7 +119,7 @@ export default class Index extends Component<any, State> {
       return;
     }
     const { book } = this.state;
-    Taro.setStorageSync('settleList', [book]);
+    Taro.setStorageSync('settleList', [{ ...book, selectQuantity: 1 }]);
     Taro.navigateTo({ url: '/pages/purchase/index' })
   }
 

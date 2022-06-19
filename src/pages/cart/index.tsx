@@ -257,16 +257,20 @@ export default class Index extends Component<any, State> {
                         <View className='price'>¥{item.presentPrice}</View>
                       </View>
                     </View>
-                    <AtInputNumber
-                      className='quantity'
-                      type='digit'
-                      min={1}
-                      max={item.stock}
-                      step={1}
-                      width={60}
-                      value={item.selectQuantity}
-                      onChange={this.handleChange.bind(this, item.ISBN)}
-                    />
+                    {
+                      item.stock <= 0 ?
+                        <View className='noquantity'>暂无库存</View> :
+                        <AtInputNumber
+                          className='quantity'
+                          type='digit'
+                          min={1}
+                          max={item.stock}
+                          step={1}
+                          width={60}
+                          value={item.selectQuantity}
+                          onChange={this.handleChange.bind(this, item.ISBN)}
+                        />
+                    }
                   </View>
                 )}
               </View>

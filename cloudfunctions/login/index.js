@@ -37,6 +37,7 @@ const login = async (event) => {
     })
     .get()
     .then((res) => {
+      console.log(res)
       if (res.data.length === 0) {
         return {
           isNewUser: true,

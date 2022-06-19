@@ -127,9 +127,6 @@ const delStock = async (book) => {
         data: {
           stock: stk - item.num,
           salesVolume: sv + item.num
-        },
-        fail:res=>{
-          console.log(res)
         }
       })
   }

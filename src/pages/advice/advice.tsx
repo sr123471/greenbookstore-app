@@ -49,7 +49,7 @@ export default class Index extends Component<any, any> {
       }
 
       Taro.cloud.callFunction({
-        name: 'school',
+        name: 'advice',
         data
       })
 

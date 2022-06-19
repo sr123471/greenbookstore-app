@@ -80,7 +80,7 @@ export default class Index extends Component<any, State> {
       if (!canClick) return;
       canClick = false;
       Taro.cloud.callFunction({
-        name: 'school',
+        name: 'cart',
         data: {
           action: 'hasBookInCart',
           userId: Taro.getStorageSync('openid'),
@@ -93,7 +93,7 @@ export default class Index extends Component<any, State> {
             icon: 'success',
           });
           Taro.cloud.callFunction({
-            name: 'school',
+            name: 'cart',
             data: {
               action: 'addCart',
               userId: Taro.getStorageSync('openid'),
@@ -119,7 +119,7 @@ export default class Index extends Component<any, State> {
       return;
     }
     const { book } = this.state;
-    Taro.setStorageSync('settleList', [book]);
+    Taro.setStorageSync('settleList', [{ ...book, selectQuantity: 1 }]);
     Taro.navigateTo({ url: '/pages/purchase/index' })
   }
 

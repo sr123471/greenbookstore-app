@@ -76,7 +76,7 @@ export default function Order() {
 
     let data = dataCreator('getOrderCounts',
       Taro.getStorageSync('openid'), limit, skip, showMode)
-    cloudCall('school', data)
+    cloudCall('order', data)
       .then((res: any) => {
         setOrder([]);
         setTotal(res.result.total);
@@ -84,7 +84,7 @@ export default function Order() {
       .then(() => {
         let data = dataCreator('getOrderList',
           Taro.getStorageSync('openid'), limit, 0, showMode)
-        cloudCall('school', data)
+        cloudCall('order', data)
           .then((res: any) => {
             setOrder(res.result);
             emptyJudge(res);
@@ -148,7 +148,7 @@ export default function Order() {
       let data = dataCreator('getOrderList',
         Taro.getStorageSync('openid'), limit, skip, showMode)
 
-      cloudCall('school', data)
+      cloudCall('order', data)
         .then((res: any) => {
           const newOrderList = order.concat(res.result);
 

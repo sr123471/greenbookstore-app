@@ -37,8 +37,10 @@ export default function Purchase() {
     const totalPrice: number = bookList.reduce((previousValue, currentValue) => {
       return previousValue + currentValue.presentPrice * currentValue.selectQuantity;
     }, 0);
+    console.log(totalPrice)
+    console.log(Math.round(totalPrice * 100) / 100)
     setBookList(bookList);
-    setTotalPrice(totalPrice);
+    setTotalPrice(Math.round(totalPrice * 100) / 100);
   }, [])
 
   // const handleLinkToAddressPage = (): void => {
@@ -75,7 +77,7 @@ export default function Purchase() {
           </View> */}
         <View className='orderMessage'>
           <AtIcon prefixClass='icon' className='icon-home' value='shouye' size='18'></AtIcon>
-          <Text>绿色书屋</Text>
+          <Text>文客淘书</Text>
           <View>
             {
               bookList.map(item =>
@@ -96,7 +98,7 @@ export default function Purchase() {
           </View>
           <View className='distribution'>
             <View>配送方式</View>
-            <View>自提点自提</View>
+            <View>图书馆五楼淘书阁自提</View>
           </View>
         </View>
         <View className='purchaseWay'>

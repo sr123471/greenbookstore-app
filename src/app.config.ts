@@ -1,13 +1,13 @@
 export default {
   pages: [
     // sr
-    'pages/login/index',
     'pages/home/index',
     'pages/cart/index',
     'pages/bookList/index',
     'pages/search/index',
     'pages/bookDetail/index',
     'pages/purchase/index',
+    'pages/login/index',
     // zcy
     'pages/usercenter/usercenter',
     'pages/addressedit/addressedit',

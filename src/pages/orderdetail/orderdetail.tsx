@@ -6,8 +6,7 @@ import { View, Image, Text } from '@tarojs/components'
 import './orderdetail.less'
 
 export default function OrderDetail() {
-  const [order, setOrder] = useState(Object)
-
+  const [order, setOrder] = useState({ book: [] })
   useReady(() => {
     let pages = getCurrentPages()
     const current = pages[pages.length - 1]
@@ -37,7 +36,7 @@ export default function OrderDetail() {
 
       data.receiveTime = `${year}-${month}-${day} ${h}:${m}:${s}`
 
-      if (year === 1970) {
+      if (year === 1970 || year === 'NaN') {
         data.receiveTime = '未签收'
       }
 
@@ -64,7 +63,7 @@ export default function OrderDetail() {
 
       data.createTime = `${year}-${month}-${day} ${h}:${m}:${s}`
 
-
+      console.log(data);
       setOrder(data)
     })
   })
@@ -72,13 +71,9 @@ export default function OrderDetail() {
   return (
     <View className='bg'>
       <View className='card'>
-        <Image
-          className='bookpic'
-          src={order.imgURL}
-        />
-        <View className='bookinfo'>
+        <View>
           <View className='booktitle'>
-            {order.bookName}
+            总价：
           </View>
           <View className='price'>
             <Text className='priceint'>¥{order.priceInt}</Text>
@@ -90,6 +85,15 @@ export default function OrderDetail() {
           <AtListItem title='订单编号' note={order._id} />
           <AtListItem title='付款时间' note={order.createTime} />
           <AtListItem title='成交时间' note={order.receiveTime} />
+
+          {order.book.map((item) => {
+            return (<AtListItem
+              title={item.name}
+              note={'¥' + item.presentPrice*item.num}
+              extraText={'x' + item.num}
+              thumb={item.imgURL}
+            />)
+          })}
         </AtList>
 
       </View>

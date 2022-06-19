@@ -42,6 +42,15 @@ const pay = (bookList, money) => {
             }).then((res2)=>{
 
                 if(res2.result===-1){
+                    Taro.cloud.callFunction({
+                        name: 'do_pay',
+                        data: {
+                            type: 'revert',
+                            book: tobuy,
+                            openid: Taro.getStorageSync('openid'),
+                        }
+                    })
+                    
                     Taro.showToast({
                         title: '库存不足',
                         icon: 'error',

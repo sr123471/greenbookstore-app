@@ -31,7 +31,7 @@ function OrderCard(props) {
       <View className='bookinfo'>
         <AtIcon className='arrow' value='chevron-right' size='20' color='#8c8c8c' />
         <View className='booktitle'>
-          {order.bookName}
+          {order.book[0].name}{order.book.length>1?'等书籍':''}
         </View>
         <View className='price'>
           <Text className='priceint'>¥{order.priceInt}.</Text>
@@ -48,6 +48,7 @@ function OrderCard(props) {
 
 interface OrderInfo {
   bookName: string;
+  book: Array<object>;
   imgURL: string;
   price: number;
   status: string;
@@ -58,6 +59,7 @@ interface OrderInfo {
 
 interface OrderShow {
   bookName: string;
+  book: Array<object>;
   imgURL: string;
   priceInt: string;
   priceDecimal: string;
@@ -69,6 +71,7 @@ interface OrderShow {
 
 function useOrder(props: OrderInfo): OrderShow {
   const [bookName, setBookName] = useState(props.bookName);
+  const [book,setBook]=useState(props.book)
   const [imgURL, setImg] = useState(props.imgURL);
 
   let int = Math.floor(props.price);
@@ -84,7 +87,7 @@ function useOrder(props: OrderInfo): OrderShow {
   const [createTime, setCreateTime] = useState(props.createTime);
   const [receiveTime, setReceiveTime] = useState(props.receiveTime);
 
-  return { bookName, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime };
+  return { bookName,book, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime };
 }
 
 export default OrderCard

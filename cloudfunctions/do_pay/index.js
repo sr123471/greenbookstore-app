@@ -42,24 +42,26 @@ const addOrderDelCart = async (book, openid) => {
   user = user.data[0]
   console.log(user)
 
-  for (let i = 0; i < book.length; i++) {
+
+  let totalPrice=0
+  for(let i=0;i<book.length;i++){
     item = book[i]
-    await db.collection('order').add({
-      data: {
-        ISBN: item.ISBN,
-        bookName: item.name,
-        createTime: new Date(),
-        name: user.name,
-        phone: user.phone,
-        open_id: openid,
-        receiveTime: null,
-        num: item.num,
-        price: item.num * item.presentPrice,
-        status: 'unReceived',
-        imgURL: item.imgURL
-      }
-    })
+    totalPrice+=item.num*item.presentPrice
   }
+
+  await db.collection('order').add({
+    data: {
+      book: book,
+      createTime: new Date().getTime(),
+      name: user.name,
+      phone: user.phone,
+      open_id: openid,
+      receiveTime: null,
+      price: totalPrice,
+      status: 'unReceived',
+      imgURL: book[0].imgURL
+    }
+  })
 
   cart = user.cartList
   console.log(cart)
@@ -99,7 +101,7 @@ const verifyStock = async (book) => {
     }).get()
     stk = stk.data[0].stock
 
-    if(stk<item.num){
+    if (stk < item.num) {
       return -1
     }
   }
@@ -107,7 +109,7 @@ const verifyStock = async (book) => {
 }
 
 const delStock = async (book) => {
-
+  console.log(book)
   for (let i = 0; i < book.length; i++) {
     item = book[i]
     let stk = await db.collection('book').where({
@@ -115,7 +117,7 @@ const delStock = async (book) => {
     }).get()
     let sv = stk.data[0].salesVolume
     stk = stk.data[0].stock
-    console.log(stk)
+    console.log(item)
 
     await db.collection('book')
       .where({
@@ -125,6 +127,9 @@ const delStock = async (book) => {
         data: {
           stock: stk - item.num,
           salesVolume: sv + item.num
+        },
+        fail:res=>{
+          console.log(res)
         }
       })
   }
@@ -169,17 +174,17 @@ exports.main = async (event, context) => {
   if (event.type === 'done') {
     addOrderDelCart(event.book, event.openid)
     return true;
-  } 
+  }
 
-  else if(event.type==='stock'){
-    let rst=await verifyStock(event.book)
+  else if (event.type === 'stock') {
+    let rst = await verifyStock(event.book)
     return rst
   }
 
-  else if(event.type=='revert'){
+  else if (event.type == 'revert') {
     addStock(event.book)
   }
-  
+
   else {
 
     const uid = uuid();

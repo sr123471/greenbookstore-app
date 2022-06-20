@@ -98,7 +98,7 @@ export default function Purchase() {
           </View>
           <View className='distribution'>
             <View>配送方式</View>
-            <View>图书馆五楼淘书阁自提</View>
+            <View>浙外图书馆五楼淘书阁自提</View>
           </View>
         </View>
         <View className='purchaseWay'>

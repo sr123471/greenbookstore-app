@@ -40,9 +40,9 @@ export default function Login() {
   return (
     <View>
       <View className='imgWrapper'>
-        <Image className='img' src='https://s1.ax1x.com/2022/06/14/X4s8fK.png' mode='widthFix'></Image>
+        <Image className='img' src='https://greenbookstore.oss-cn-hangzhou.aliyuncs.com/img/logo.png' mode='widthFix'></Image>
       </View>
-      <View className='introduce'>文客淘书角致力于为高校书籍环保流转、建立节约节能型高校出一份力。</View>
+      <View className='introduce'>文客淘书致力于为同学们提供便捷的二手书交易渠道，实现高校内部书籍的循环流转，建立资源节约型高校，热烈欢迎同学们的使用！</View>
       <Button className='bt' type='primary' open-type="getPhoneNumber" onGetPhoneNumber={getPhoneNumber}>微信手机号快捷登录</Button>
     </View>
   )

@@ -69,6 +69,7 @@ const getPhoneNumber = async (event) => {
         open_id: event.openid,
         name: event.name,
         phone: phoneMessage.list[0].data.phoneNumber,
+        createTime: new Date().getTime(),
         cartList: [],
       }
     })

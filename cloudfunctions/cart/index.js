@@ -19,8 +19,10 @@ const getCartList = async (event) => {
     })
     .get()
     .then(res => {
-      cartList = res.data[0].cartList;
-      ISBNList = res.data[0].cartList.map(item => item.ISBN);
+      if (res.data.length !== 0) {
+        cartList = res.data[0].cartList;
+        ISBNList = res.data[0].cartList.map(item => item.ISBN);
+      }
     })
   await db.collection('book')
     .where({

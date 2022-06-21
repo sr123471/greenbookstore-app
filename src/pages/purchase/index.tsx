@@ -49,20 +49,20 @@ export default function Purchase() {
 
   // 提交订单
   const handleSubmitOrder = () => {
-      let timer;
-     
-      let run = () => {
-        pay(bookList, totalPrice)
-        timer=setTimeout(()=>{
-          clearTimeout(timer);
-          timer=null;
-        },4000);
+    let timer;
+
+    let run = () => {
+      pay(bookList, totalPrice)
+      timer = setTimeout(() => {
+        clearTimeout(timer);
+        timer = null;
+      }, 4000);
+    }
+
+    return function () {
+      if (!timer) {
+        run();
       }
-     
-      return function () {
-        if(!timer){
-          run();
-        }
     }
     // if (receiveInformationList.length === 0)
     //   Taro.showToast({

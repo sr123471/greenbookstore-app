@@ -10,15 +10,13 @@ function OrderCard(props) {
   const order = useOrder(props.order)
 
   function detail() {
-    console.log(this)
+    // console.log(this)
     Taro.navigateTo({
       url: '../orderdetail/orderdetail',
       success: function (res) {
         // 通过eventChannel向被打开页面传送数据
         res.eventChannel.emit('toDetail', order)
       }
-    }).then(() => {
-      console.log("OK！")
     })
   }
 
@@ -31,7 +29,7 @@ function OrderCard(props) {
       <View className='bookinfo'>
         <AtIcon className='arrow' value='chevron-right' size='20' color='#8c8c8c' />
         <View className='booktitle'>
-          {order.book[0].name}{order.book.length>1?'等书籍':''}
+          {order.book[0].name}{order.book.length > 1 ? '等书籍' : ''}
         </View>
         <View className='price'>
           <Text className='priceint'>¥{order.priceInt}.</Text>
@@ -71,7 +69,7 @@ interface OrderShow {
 
 function useOrder(props: OrderInfo): OrderShow {
   const [bookName, setBookName] = useState(props.bookName);
-  const [book,setBook]=useState(props.book)
+  const [book, setBook] = useState(props.book)
   const [imgURL, setImg] = useState(props.imgURL);
 
   let int = Math.floor(props.price);
@@ -87,7 +85,7 @@ function useOrder(props: OrderInfo): OrderShow {
   const [createTime, setCreateTime] = useState(props.createTime);
   const [receiveTime, setReceiveTime] = useState(props.receiveTime);
 
-  return { bookName,book, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime };
+  return { bookName, book, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime };
 }
 
 export default OrderCard

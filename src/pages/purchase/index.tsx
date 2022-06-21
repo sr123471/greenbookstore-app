@@ -48,8 +48,22 @@ export default function Purchase() {
   // }
 
   // 提交订单
-  const handleSubmitOrder = (): void => {
-    pay(bookList, totalPrice)
+  const handleSubmitOrder = () => {
+      let timer;
+     
+      let run = () => {
+        pay(bookList, totalPrice)
+        timer=setTimeout(()=>{
+          clearTimeout(timer);
+          timer=null;
+        },4000);
+      }
+     
+      return function () {
+        if(!timer){
+          run();
+        }
+    }
     // if (receiveInformationList.length === 0)
     //   Taro.showToast({
     //     title: '请先选择地址',
@@ -112,7 +126,7 @@ export default function Purchase() {
       </View>
       <View className='footer'>
         <View>合计<Text className='totalPrice'>¥{totalPrice}</Text></View>
-        <AtButton className='submitBt' onClick={handleSubmitOrder} type='primary' size='normal' circle={true}>提交订单</AtButton>
+        <AtButton className='submitBt' onClick={handleSubmitOrder()} type='primary' size='normal' circle={true}>提交订单</AtButton>
       </View>
     </View>
   )

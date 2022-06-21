@@ -43,10 +43,10 @@ const addOrderDelCart = async (book, openid) => {
   console.log(user)
 
 
-  let totalPrice=0
-  for(let i=0;i<book.length;i++){
+  let totalPrice = 0
+  for (let i = 0; i < book.length; i++) {
     item = book[i]
-    totalPrice+=item.num*item.presentPrice
+    totalPrice += item.num * item.presentPrice
   }
 
   await db.collection('order').add({
@@ -93,15 +93,17 @@ const addOrderDelCart = async (book, openid) => {
 }
 
 const verifyStock = async (book) => {
-
+  // console.log(book)
   for (let i = 0; i < book.length; i++) {
     item = book[i]
     let stk = await db.collection('book').where({
       ISBN: item.ISBN
     }).get()
+    // console.log(stk.data[0])
     stk = stk.data[0].stock
+    console.log(stk, item.num);
 
-    if (stk < item.num) {
+    if (stk + item.num < item.num) {
       return -1
     }
   }
@@ -141,7 +143,6 @@ const addStock = async (book) => {
     }).get()
     let sv = stk.data[0].salesVolume
     stk = stk.data[0].stock
-    console.log(stk)
 
     await db.collection('book')
       .where({

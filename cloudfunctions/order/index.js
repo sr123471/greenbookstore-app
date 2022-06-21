@@ -50,6 +50,7 @@ const getOrderList = async (event) => {
       .where({
         open_id: event.open_id
       })
+      .orderBy('createTime','desc')
       .limit(event.limit)
       .skip(event.skip)
       .get()
@@ -66,6 +67,7 @@ const getOrderList = async (event) => {
         open_id: event.open_id,
         status: event.status
       })
+      .orderBy('createTime','desc')
       .limit(event.limit)
       .skip(event.skip)
       .get()

@@ -56,7 +56,7 @@ const addOrderDelCart = async (book, openid) => {
       name: user.name,
       phone: user.phone,
       open_id: openid,
-      receiveTime: null,
+      receiveTime: 0,
       price: totalPrice,
       status: 'unReceived',
       imgURL: book[0].imgURL

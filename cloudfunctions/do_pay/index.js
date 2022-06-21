@@ -56,7 +56,7 @@ const addOrderDelCart = async (book, openid) => {
       name: user.name,
       phone: user.phone,
       open_id: openid,
-      receiveTime: null,
+      receiveTime: 0,
       price: totalPrice,
       status: 'unReceived',
       imgURL: book[0].imgURL
@@ -184,7 +184,6 @@ exports.main = async (event, context) => {
   }
 
   else {
-
     const uid = uuid();
     const nstr = generateNstr();
 
@@ -193,7 +192,7 @@ exports.main = async (event, context) => {
       outTradeNo: uid,
       spbillCreateIp: '127.0.0.1',
       subMchId: sub_mch_id,
-      totalFee: 1,
+      totalFee: event.total * 100,
       envId: "release-2gu9vjw481860c6a",
       functionName: "done_pay",
       tradeType: 'JSAPI',

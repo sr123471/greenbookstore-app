@@ -135,19 +135,16 @@ export default function Order() {
 
   const scrollToBottom = () => {
     // 如果偏移量大于等于数据库中书本的总数，则说明已显示完所有的书本，直接return
-    console.log(order);
     if (skip >= total) return;
     let canLoading = true;
 
     return () => {
       setIndicator(true)
-
       if (!canLoading) return;
       canLoading = false;
 
       let data = dataCreator('getOrderList',
         Taro.getStorageSync('openid'), limit, skip, showMode)
-
       cloudCall('order', data)
         .then((res: any) => {
           const newOrderList = order.concat(res.result);
@@ -165,14 +162,13 @@ export default function Order() {
     };
   }
 
-
   return (
     <ScrollView
+      className='scroll'
       scrollY
       onScrollToLower={scrollToBottom()}
     >
-
-      <View className='nav'>
+    <View className='nav'>
         <Text onClick={toAllOrder} className={`nav1 ${showMode === 'allorder' ? 'navSelected' : null}`}>全部订单</Text>
         <Text onClick={toUnReceived} className={`nav1 ${showMode === 'unReceived' ? 'navSelected' : null}`}>待取货</Text>
         <Text onClick={toDone} className={`nav1 ${showMode === 'done' ? 'navSelected' : null}`}>已完成</Text>
@@ -194,10 +190,13 @@ export default function Order() {
       <AtActivityIndicator
         className='activityIndicator'
         color='#FFFFFF'
+        content='加载中...'
         isOpened={isActivityIndicatorOpened}
       ></AtActivityIndicator>
-
+        {
+          skip >= total &&
+          <AtDivider className='divider' content='没有更多了' fontColor='#9D9D9D' lineColor='#9D9D9D' />
+        }
     </ScrollView>
-
   )
 }

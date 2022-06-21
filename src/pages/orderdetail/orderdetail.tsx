@@ -36,7 +36,7 @@ export default function OrderDetail() {
 
       data.receiveTime = `${year}-${month}-${day} ${h}:${m}:${s}`
 
-      if (year === 1970 || year === 'NaN') {
+      if (year === 1970 || isNaN(year)) {
         data.receiveTime = '未签收'
       }
 
@@ -63,7 +63,7 @@ export default function OrderDetail() {
 
       data.createTime = `${year}-${month}-${day} ${h}:${m}:${s}`
 
-      console.log(data);
+      // console.log(data);
       setOrder(data)
     })
   })

@@ -151,7 +151,6 @@ export default function Order() {
       cloudCall('order', data)
         .then((res: any) => {
           const newOrderList = order.concat(res.result);
-
           setOrder(newOrderList);
           setIndicator(false)
           if (total - skip < limit) {

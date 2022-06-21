@@ -30,10 +30,16 @@ const getCartList = async (event) => {
     })
     .get()
     .then(res => {
-      data = res.data.map((item, i) => ({
-        ...item,
-        ...cartList[i]
-      }))
+      cartList.map(item => {
+        res.data.map(i => {
+          if (item.ISBN === i.ISBN) {
+            data.push({
+              ...item,
+              ...i
+            })
+          }
+        })
+      })
     })
   return data;
 }

@@ -85,6 +85,7 @@ export default function OrderDetail() {
           <AtListItem title='订单编号' note={order._id} />
           <AtListItem title='付款时间' note={order.createTime} />
           <AtListItem title='成交时间' note={order.receiveTime} />
+          <AtListItem title='备注' note={order.remark===undefined?'无备注':order.remark} />
 
           {order.book.map((item: any) => {
             return (<AtListItem

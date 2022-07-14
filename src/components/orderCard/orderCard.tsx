@@ -53,6 +53,7 @@ interface OrderInfo {
   _id: string;
   createTime: Date;
   receiveTime: Date;
+  remark: string;
 }
 
 interface OrderShow {
@@ -65,6 +66,7 @@ interface OrderShow {
   _id: string;
   createTime: Date;
   receiveTime: Date;
+  remark: string;
 }
 
 function useOrder(props: OrderInfo): OrderShow {
@@ -84,8 +86,9 @@ function useOrder(props: OrderInfo): OrderShow {
   const [_id, set_id] = useState(props._id);
   const [createTime, setCreateTime] = useState(props.createTime);
   const [receiveTime, setReceiveTime] = useState(props.receiveTime);
+  const [remark, setRemark] = useState(props.remark);
 
-  return { bookName, book, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime };
+  return { bookName, book, imgURL, priceInt, priceDecimal, status, _id, createTime, receiveTime, remark };
 }
 
 export default OrderCard

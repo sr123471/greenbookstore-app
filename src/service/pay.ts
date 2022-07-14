@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 import { sortedUniq } from 'lodash'
 
-const pay = (bookList, money) => {
+const pay = (bookList, money, finalNote) => {
     console.log(bookList)
 
     let tobuy = []
@@ -13,7 +13,7 @@ const pay = (bookList, money) => {
             name: item.bookName,
             presentPrice: item.presentPrice,
             num: item.selectQuantity,
-            imgURL:item.imgURL
+            imgURL: item.imgURL
         }
 
         tobuy.push(temp)
@@ -25,6 +25,7 @@ const pay = (bookList, money) => {
         name: 'do_pay',
         data: {
             type: 'pay',
+            remark: finalNote,
             book: tobuy,
             total: money,
             openid: Taro.getStorageSync('openid'),
@@ -35,13 +36,14 @@ const pay = (bookList, money) => {
                 name: 'do_pay',
                 data: {
                     type: 'stock',
+                    remark: finalNote,
                     book: tobuy,
                     total: money,
                     openid: Taro.getStorageSync('openid'),
                 },
-            }).then((res2)=>{
+            }).then((res2) => {
 
-                if(res2.result===-1){
+                if (res2.result === -1) {
                     Taro.cloud.callFunction({
                         name: 'do_pay',
                         data: {
@@ -50,13 +52,13 @@ const pay = (bookList, money) => {
                             openid: Taro.getStorageSync('openid'),
                         }
                     })
-                    
+
                     Taro.showToast({
                         title: '库存不足',
                         icon: 'error',
                     });
                 }
-                else{
+                else {
                     // get resource ID
                     const payment = res.result.payment
                     // console.log(res)
@@ -67,6 +69,7 @@ const pay = (bookList, money) => {
                                 name: 'do_pay',
                                 data: {
                                     type: 'done',
+                                    remark: finalNote,
                                     book: tobuy,
                                     openid: Taro.getStorageSync('openid'),
                                 }

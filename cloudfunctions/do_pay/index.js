@@ -34,7 +34,7 @@ const generateNstr = function () {
   return pwd;
 }
 
-const addOrderDelCart = async (book, openid) => {
+const addOrderDelCart = async (book, openid, remark) => {
   let user = await db.collection('user').where({
     open_id: openid
   }).get()
@@ -48,13 +48,16 @@ const addOrderDelCart = async (book, openid) => {
     item = book[i]
     totalPrice += item.num * item.presentPrice
   }
-
+  totalPrice = Math.round(totalPrice * 100) / 100
+  console.log("haha"+remark)
+  console.log(totalPrice)
   await db.collection('order').add({
     data: {
       book: book,
       createTime: new Date().getTime(),
       name: user.name,
       phone: user.phone,
+      remark: remark,
       open_id: openid,
       receiveTime: 0,
       price: totalPrice,
@@ -168,9 +171,10 @@ exports.main = async (event, context) => {
   // 		pay: order.payment
   // 	}
   // }
+  console.log(event.remark)
 
   if (event.type === 'done') {
-    addOrderDelCart(event.book, event.openid)
+    addOrderDelCart(event.book, event.openid, event.remark)
     return true;
   }
 
@@ -187,12 +191,15 @@ exports.main = async (event, context) => {
     const uid = uuid();
     const nstr = generateNstr();
 
+    const totalPrice = Math.round(event.total * 100)
+    console.log(totalPrice)
+
     data = {
       body: "测试微信支付功能",
       outTradeNo: uid,
       spbillCreateIp: '127.0.0.1',
       subMchId: sub_mch_id,
-      totalFee: event.total * 100,
+      totalFee: totalPrice,
       envId: "release-2gu9vjw481860c6a",
       functionName: "done_pay",
       tradeType: 'JSAPI',

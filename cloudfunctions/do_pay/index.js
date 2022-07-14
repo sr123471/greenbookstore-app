@@ -49,8 +49,7 @@ const addOrderDelCart = async (book, openid, remark) => {
     totalPrice += item.num * item.presentPrice
   }
   totalPrice = Math.round(totalPrice * 100) / 100
-  console.log("haha"+remark)
-  console.log(totalPrice)
+
   await db.collection('order').add({
     data: {
       book: book,
@@ -171,7 +170,6 @@ exports.main = async (event, context) => {
   // 		pay: order.payment
   // 	}
   // }
-  console.log(event.remark)
 
   if (event.type === 'done') {
     addOrderDelCart(event.book, event.openid, event.remark)
@@ -192,7 +190,6 @@ exports.main = async (event, context) => {
     const nstr = generateNstr();
 
     const totalPrice = Math.round(event.total * 100)
-    console.log(totalPrice)
 
     data = {
       body: "测试微信支付功能",

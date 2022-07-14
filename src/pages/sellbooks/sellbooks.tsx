@@ -86,7 +86,7 @@ export default class Index extends Component<any, any> {
             className='code'
             mode='aspectFit'
             showMenuByLongpress={true}
-            src="https://labeler.oss-cn-hangzhou.aliyuncs.com/img/scan2.png" />
+            src="https://greenbookstore.oss-cn-hangzhou.aliyuncs.com/img/scan2.png" />
         </View>
       </View>
     )

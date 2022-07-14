@@ -13,7 +13,7 @@ export default function Search() {
   const handleChange = (value: string): void => {
     setValue(value);
     if (value !== '') {
-      // 延迟请求，避免当用户连续输入连续请求接口的问题
+      // 延迟请求，避免当用户连续输入连续请求接口的问题，函数防抖
       clearTimeout(timer);
       setTimer(
         window.setTimeout(() => {

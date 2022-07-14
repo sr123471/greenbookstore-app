@@ -19,8 +19,10 @@ const getCartList = async (event) => {
     })
     .get()
     .then(res => {
-      cartList = res.data[0].cartList;
-      ISBNList = res.data[0].cartList.map(item => item.ISBN);
+      if (res.data.length !== 0) {
+        cartList = res.data[0].cartList;
+        ISBNList = res.data[0].cartList.map(item => item.ISBN);
+      }
     })
   await db.collection('book')
     .where({
@@ -28,10 +30,16 @@ const getCartList = async (event) => {
     })
     .get()
     .then(res => {
-      data = res.data.map((item, i) => ({
-        ...item,
-        ...cartList[i]
-      }))
+      cartList.map(item => {
+        res.data.map(i => {
+          if (item.ISBN === i.ISBN) {
+            data.push({
+              ...item,
+              ...i
+            })
+          }
+        })
+      })
     })
   return data;
 }

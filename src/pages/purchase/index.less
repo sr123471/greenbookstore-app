@@ -104,6 +104,32 @@ page {
         border-bottom: 1px solid #f2f2f2;
       }
 
+      .orderNotes {
+        display: flex;
+        justify-content: space-between;
+        padding: 30px 0;
+        border-bottom: 1px solid #f2f2f2;
+
+        .note {
+          display: flex;
+
+          .finalNote {
+            width:300px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+          }
+
+          .noneNote {
+            color: #9D9D9D;
+          }
+
+          .icon-right {
+            margin-top: 3px;
+          }
+        }
+      }
+
       .subtotal {
         display: flex;
         justify-content: flex-end;
@@ -131,6 +157,22 @@ page {
           position: absolute;
           right: 0;
         }
+      }
+    }
+
+    .disclaimer {
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 20px;
+      background-color: #ffffff;
+
+      .text1 {
+        font-size: 34px;
+        font-weight: bold;
+      }
+
+      .text2 {
+        text-indent: 1.5em;
       }
     }
   }

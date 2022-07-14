@@ -1,7 +1,7 @@
 import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { AtIcon, AtDrawer } from 'taro-ui'
+import { AtIcon, AtDrawer, AtSearchBar } from 'taro-ui'
 import { cloudCall, dataCreator } from '../../service/home'
 import { Academy, Major, Exam } from '../../components/common/common'
 import { login } from '../../service/login'
@@ -106,6 +106,17 @@ export default class Index extends Component<any, State> {
     }
   }
 
+  handleToSearchPage = (): void => {
+    const { searchValue } = this.state;
+    if (searchValue === undefined) {
+      Taro.navigateTo({ url: '/pages/search/index' });
+    } else {
+      Taro.navigateBack();
+    }
+  }
+
+  onChange = (): void => { }
+
   // 选择公共课书籍or专业课书籍or考试书籍or小说书籍
   handleChangeBookType = (id: number): void => {
     this.setState({ currentBookType: id })
@@ -130,10 +141,20 @@ export default class Index extends Component<any, State> {
 
     return (
       <View className='professionalBookPage'>
-        <View className='header' onClick={this.handleShowDrawer}>
-          <AtIcon prefixClass='icon' className='icon-weizhi' value='weizhi-xianxing' size='20' color='#9D9D9D'></AtIcon>
-          <View className='selectSchool'>{currentSchool}</View>
-          <AtIcon className='icon-right' value='chevron-right' size='20' color='#9D9D9D'></AtIcon>
+        <View className='header'>
+          <View className='location' onClick={this.handleShowDrawer}>
+            <AtIcon prefixClass='icon' className='icon-weizhi' value='weizhi-xianxing' size='20' color='#9D9D9D'></AtIcon>
+            <View className='selectSchool'>{currentSchool}</View>
+            <AtIcon className='icon-right' value='chevron-right' size='20' color='#9D9D9D'></AtIcon>
+          </View>
+          <View className='searchArea' onClick={this.handleToSearchPage}>
+            <AtSearchBar
+              value=''
+              onChange={this.onChange.bind(this)}
+              placeholder='图书搜索'
+              disabled
+            />
+          </View>
         </View>
         <AtDrawer
           show={showDrawer}

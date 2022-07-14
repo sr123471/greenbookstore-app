@@ -86,10 +86,10 @@ export default function OrderDetail() {
           <AtListItem title='付款时间' note={order.createTime} />
           <AtListItem title='成交时间' note={order.receiveTime} />
 
-          {order.book.map((item) => {
+          {order.book.map((item: any) => {
             return (<AtListItem
               title={item.name}
-              note={'¥' + item.presentPrice*item.num}
+              note={'¥' + item.presentPrice * item.num}
               extraText={'x' + item.num}
               thumb={item.imgURL}
             />)

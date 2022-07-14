@@ -160,16 +160,21 @@ export default class Index extends Component<any, State> {
   handleFinishOrDelete = (): void => {
     const { cartList, isManagement, selectItemNum } = this.state;
     if (isManagement) {
+      const selectedBookList = cartList.filter(item =>
+        item.isSelect === true
+      )
       if (selectItemNum === 0) {
         Taro.showToast({
           title: '您还没有选择商品哦',
           icon: 'none',
         })
+      } else if (selectedBookList.some(item => item.stock <= 0)) {
+        Taro.showToast({
+          title: '选中了暂无库存的商品,请取消选择后再结算哦',
+          icon: 'none',
+        })
       } else {
         // 结算商品
-        const selectedBookList = cartList.filter(item =>
-          item.isSelect === true
-        )
         Taro.setStorageSync('settleList', selectedBookList);
         Taro.navigateTo({ url: '/pages/purchase/index' })
       }

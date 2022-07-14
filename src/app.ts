@@ -2,7 +2,6 @@ import { Component } from 'react'
 import Taro from '@tarojs/taro'
 import '../src/style/font/iconfont.less'
 import './app.scss'
-import { login } from './service/login'
 
 class App extends Component {
 
